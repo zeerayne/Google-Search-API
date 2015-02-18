@@ -1,9 +1,36 @@
 Google Search API
 =====
 
+*The original package was developed by https://github.com/BirdAPI This is a forked package that I have re-factored and I mean to maintain in the foreseeable future*
+
 Google Search API is a python based library for searching various functionalities of google.  It uses screen scraping to retrieve the results, and thus is unreliable if the way google's web pages are returned change in the future.
 
 *Disclaimer: This software uses screen scraping to retreive search results from google.com, and therefore this software may stop working at any given time.  Use this software at your own risk. I assume no responsibility for how this software API is used by others.*
+
+Installation
+------------
+
+The repo is structured like a package, so it can be installed from pip using
+github clone url. From command line type:
+
+```
+pip install git+https://github.com/abenassi/Google-Search-API.git
+```
+
+To upgrade the package if you have already installed it:
+
+```
+pip install git+https://github.com/abenassi/Google-Search-API.git --upgrade
+```
+
+You could also just download or clone the repo and import the package from
+Google-Search-API folder.
+
+```python
+import os
+os.chdir("C:\Path_where_repo_is")
+import google_search_api
+```
 
 ## Google Web Search
 You can search google web in the following way:
