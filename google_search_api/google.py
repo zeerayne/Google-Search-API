@@ -68,15 +68,24 @@ Represents a google image search result
 """
 
 
-def download_images(image_results):
+def download_images(image_results, path=None):
     """Download a list of images.
 
     Args:
         images_list: A list of ImageResult instances
     """
 
+    total_images = len(image_results)
+    i = 1
     for image_result in image_results:
-        image_result.download()
+        progress = "".join(["Downloading image ", str(i),
+                            " (", str(total_images), ")"])
+        print progress
+        if path:
+            image_result.download(path)
+        else:
+            image_result.download()
+        i += 1
 
 
 class ImageResult:
@@ -110,13 +119,18 @@ class ImageResult:
 
         self._create_path(path)
 
-        response = requests.get(self.link, stream=True)
+        try:
+            response = requests.get(self.link, stream=True)
 
-        path_filename = self._get_path_filename(path)
-        with open(path_filename, 'wb') as output_file:
-            shutil.copyfileobj(response.raw, output_file)
+            path_filename = self._get_path_filename(path)
+            with open(path_filename, 'wb') as output_file:
+                shutil.copyfileobj(response.raw, output_file)
 
-        del response
+            del response
+
+        except Exception as inst:
+            print self.link, "has failed:"
+            print inst
 
     def _get_path_filename(self, path):
         """Build the filename to download.
@@ -210,6 +224,10 @@ Defines the public static api methods
 
 class Google:
     DEBUG_MODE = False
+    IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",
+                     "tif", "yuv", "ai", "drw", "eps", "ps", "svg", "tiff",
+                     "jpeg", "jif", "jfif", "jp2", "jpx", "j2k", "j2c", "fpx",
+                     "pcd", "png", "pdf"]
 
     """
     Returns a list of GoogleResult
@@ -310,6 +328,17 @@ class Google:
 
     @staticmethod
     def search_images(query, image_options=None, pages=1):
+        """Search images in google.
+
+        # >>> results = Google.search_images("banana")
+        # <type 'exceptions.KeyError'> 'style' index= 97
+        # <type 'exceptions.KeyError'> 'style' index= 98
+        # <type 'exceptions.KeyError'> 'style' index= 99
+        # >>> len(results)
+        # 100
+        # >>> isinstance(results[0], ImageResult)
+        # True
+        """
 
         results = []
 
@@ -319,9 +348,6 @@ class Google:
             html = get_html_from_dynamic_site(url)
 
             if html:
-                if Google.DEBUG_MODE:
-                    write_html_to_file(
-                        html, "images_{0}_{1}.html".format(query.replace(" ", "_"), i))
 
                 # parse html into bs
                 soup = BeautifulSoup(html)
@@ -346,7 +372,7 @@ class Google:
                         url_parsed = urlparse.urlparse(google_middle_link)
                         qry_parsed = urlparse.parse_qs(url_parsed.query)
                         res.link = qry_parsed["imgurl"][0]
-                        res.format = res.link[res.link.rfind(".") + 1:]
+                        res.format = Google._parse_image_format(res.link)
                         res.width = qry_parsed["w"][0]
                         res.height = qry_parsed["h"][0]
                         res.site = qry_parsed["imgrefurl"][0]
@@ -377,6 +403,34 @@ class Google:
                     j = j + 1
 
         return results
+
+    @staticmethod
+    def _parse_image_format(image_link):
+        """Parse an image format from a download link.
+
+        Args:
+            image_link: link to download an image.
+
+        >>> link = "http://blogs.elpais.com/.a/6a00d8341bfb1653ef01a73dbb4a78970d-pi"
+        >>> Google._parse_image_format(link)
+
+        >>> link = "http://minionslovebananas.com/images/gallery/preview/Chiquita-DM2-minion-banana-3.jpg%3Fw%3D300%26h%3D429"
+        >>> Google._parse_image_format(link)
+        'jpg'
+
+        """
+        parsed_format = image_link[image_link.rfind(".") + 1:]
+
+        if parsed_format not in Google.IMAGE_FORMATS:
+            for image_format in Google.IMAGE_FORMATS:
+                if image_format in parsed_format:
+                    parsed_format = image_format
+                    break
+
+        if parsed_format not in Google.IMAGE_FORMATS:
+            parsed_format = None
+
+        return parsed_format
 
     @staticmethod
     def shopping(query, pages=1):
