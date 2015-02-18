@@ -9,6 +9,8 @@ import sys
 import re
 from utils import get_html_from_dynamic_site
 import urlparse
+import shutil
+import requests
 
 try:
     import json
@@ -66,7 +68,21 @@ Represents a google image search result
 """
 
 
+def download_images(image_results):
+    """Download a list of images.
+
+    Args:
+        images_list: A list of ImageResult instances
+    """
+
+    for image_result in image_results:
+        image_result.download()
+
+
 class ImageResult:
+
+    ROOT_FILENAME = "img"
+    DEFAULT_FORMAT = "jpg"
 
     def __init__(self):
         self.name = None
@@ -88,6 +104,68 @@ class ImageResult:
                  "index={}, page={}, ".format(self.index, self.page) + \
                  "domain={}, link={})".format(self.domain, self.link)
         return string
+
+    def download(self, path="download"):
+        """Download an image to a given path."""
+
+        self._create_path(path)
+
+        response = requests.get(self.link, stream=True)
+
+        path_filename = self._get_path_filename(path)
+        with open(path_filename, 'wb') as output_file:
+            shutil.copyfileobj(response.raw, output_file)
+
+        del response
+
+    def _get_path_filename(self, path):
+        """Build the filename to download.
+
+        Checks that filename is not already in path. Otherwise looks for
+        another name.
+
+        >>> ir = ImageResult()
+        >>> ir._get_path_filename("test")
+        'test\\\img3.jpg'
+        >>> ir.name = "pirulo"
+        >>> ir.format = "jpg"
+        >>> ir._get_path_filename("test")
+        'test\\\pirulo.jpg'
+        """
+
+        path_filename = None
+
+        # preserve the original name
+        if self.name and self.format:
+            original_filename = self.name + "." + self.format
+            path_filename = os.path.join(path, original_filename)
+
+        # create a default name if there is no original name
+        if not path_filename or os.path.isfile(path_filename):
+
+            # take the format of the file, or use default
+            if self.format:
+                file_format = self.format
+            else:
+                file_format = self.DEFAULT_FORMAT
+
+            # create root of file, until reaching a non existent one
+            i = 1
+            default_filename = self.ROOT_FILENAME + str(i) + "." + file_format
+            path_filename = os.path.join(path, default_filename)
+            while os.path.isfile(path_filename):
+                i += 1
+                default_filename = self.ROOT_FILENAME + str(i) + "." + \
+                    file_format
+                path_filename = os.path.join(path, default_filename)
+
+        return path_filename
+
+    def _create_path(self, path):
+        """Create a path, if it doesn't exists."""
+
+        if not os.path.isdir(path):
+            os.mkdir(path)
 
 
 class ImageOptions:
@@ -578,4 +656,6 @@ def main():
     test()
 
 if __name__ == "__main__":
-    main()
+    # main()
+    import doctest
+    doctest.testmod()
