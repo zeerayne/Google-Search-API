@@ -17,8 +17,8 @@ try:
 except ImportError:
     import simplejson as json
 
-__author__ = "Anthony Casagrande <birdapi@gmail.com>"
-__version__ = "0.9"
+__author__ = "Anthony Casagrande <birdapi@gmail.com>, Agustin Benassi <agusbenassi@gmail.com>"
+__version__ = "1.0.0"
 
 """
 Represents a standard google search result
@@ -35,6 +35,11 @@ class GoogleResult:
         self.cached = None
         self.page = None
         self.index = None
+
+    def __repr__(self):
+        list_google = ["Name: ", self.name,
+                       "\nLink: ", self.link]
+        return "".join(list_google)
 
 """
 Represents a result returned from google calculator
@@ -327,7 +332,7 @@ class Google:
         return results
 
     @staticmethod
-    def search_images(query, image_options=None, pages=1):
+    def search_images(query, image_options=None, images=50):
         """Search images in google.
 
         # >>> results = Google.search_images("banana")
@@ -340,11 +345,13 @@ class Google:
         # True
         """
 
-        results = []
+        results = set()
+        curr_img = 0
+        page = 0
+        while curr_img < images:
 
-        for i in range(pages):
-
-            url = get_image_search_url(query, image_options, i + 1)
+            page += 1
+            url = get_image_search_url(query, image_options, page)
             html = get_html_from_dynamic_site(url)
 
             if html:
@@ -362,7 +369,7 @@ class Google:
                     res = ImageResult()
 
                     # store indexing paramethers
-                    res.page = i
+                    res.page = page
                     res.index = j
 
                     # get url of image and its paramethers
@@ -398,11 +405,18 @@ class Google:
                             exc_type, exc_value, exc_traceback = sys.exc_info()
                             print exc_type, exc_value, "index=", res.index
 
-                    results.append(res)
+                    prev_num_results = len(results)
+                    results.add(res)
+                    curr_num_results = len(results)
+
+                    # increment image counter only if new image was added
+                    images_added = curr_num_results - prev_num_results
+                    curr_img += images_added
+                    if curr_img >= images:
+                        break
 
                     j = j + 1
-
-        return results
+        return set(results)
 
     @staticmethod
     def _parse_image_format(image_link):
