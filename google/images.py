@@ -257,7 +257,7 @@ def search(query, image_options=None, images=50):
         page += 1
         url = _get_image_search_url(query, image_options, page)
         html = get_html_from_dynamic_site(url)
-        write_html_to_file(html, "test_search_images.html")
+        # write_html_to_file(html, "test_search_images.html")
 
         if html:
 

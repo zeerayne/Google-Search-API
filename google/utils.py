@@ -39,7 +39,7 @@ def get_html_from_dynamic_site(url, timeout=120, driver="firefox", attempts=10):
             browser = get_browser_with_url(url, timeout, driver)
 
             # get html
-            time.sleep(10)
+            time.sleep(5)
             content = browser.page_source
 
             # try again if there is no content
