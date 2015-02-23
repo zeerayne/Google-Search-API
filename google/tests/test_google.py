@@ -15,7 +15,7 @@ class GoogleTest(unittest.TestCase):
     def test_search_images(self):
         """Test method to search images."""
 
-        res = google.Google.search_images("apple", images=10)
+        res = google.Google.search_images("apple", num_images=10)
         self.assertEqual(len(res), 10)
 
     def test_convert_currency(self):

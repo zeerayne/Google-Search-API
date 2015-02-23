@@ -67,10 +67,7 @@ class Google:
     """Defines the public static api methods."""
 
     DEBUG_MODE = False
-    IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",
-                     "tif", "yuv", "ai", "drw", "eps", "ps", "svg", "tiff",
-                     "jpeg", "jif", "jfif", "jp2", "jpx", "j2k", "j2c", "fpx",
-                     "pcd", "png", "pdf"]
+
 
     """
     Returns a list of GoogleResult
@@ -127,10 +124,10 @@ class Google:
     def search_images_old(query, image_options=None, pages=1):
         """Old method to search images in google."""
 
-        images.search_old(query, image_options, pages)
+        return images.search_old(query, image_options, pages)
 
     @staticmethod
-    def search_images(query, image_options=None, images=50):
+    def search_images(query, image_options=None, num_images=50):
         """Search images in google.
 
         # >>> results = Google.search_images("banana")
@@ -143,7 +140,7 @@ class Google:
         # True
         """
 
-        images.search(query, image_options, images)
+        return images.search(query, image_options, num_images)
 
     @staticmethod
     def shopping(query, pages=1):

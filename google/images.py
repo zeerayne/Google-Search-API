@@ -1,4 +1,20 @@
 from utils import get_html_from_dynamic_site
+from bs4 import BeautifulSoup
+import urlparse
+
+
+def write_html_to_file(html, filename):
+    of = open(filename, "w")
+    of.write(html.encode("utf-8"))
+    # of.flush()
+    of.close()
+
+
+
+IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",
+                 "tif", "yuv", "ai", "drw", "eps", "ps", "svg", "tiff",
+                 "jpeg", "jif", "jfif", "jp2", "jpx", "j2k", "j2c", "fpx",
+                 "pcd", "png", "pdf"]
 
 class ImageOptions:
 
@@ -151,13 +167,13 @@ def _parse_image_format(image_link):
     """
     parsed_format = image_link[image_link.rfind(".") + 1:]
 
-    if parsed_format not in Google.IMAGE_FORMATS:
-        for image_format in Google.IMAGE_FORMATS:
+    if parsed_format not in IMAGE_FORMATS:
+        for image_format in IMAGE_FORMATS:
             if image_format in parsed_format:
                 parsed_format = image_format
                 break
 
-    if parsed_format not in Google.IMAGE_FORMATS:
+    if parsed_format not in IMAGE_FORMATS:
         parsed_format = None
 
     return parsed_format
@@ -186,47 +202,47 @@ def _get_image_search_url(query, image_options=None, page=0, per_page=20):
 # PUBLIC METHODS
 def search_old(query, image_options=None, pages=1):
     results = []
-        for i in range(pages):
-            url = get_image_search_url(query, image_options, i)
-            html = get_html(url)
-            if html:
-                if Google.DEBUG_MODE:
-                    write_html_to_file(
-                        html, "images_{0}_{1}.html".format(query.replace(" ", "_"), i))
-                j = 0
-                soup = BeautifulSoup(html)
-                match = re.search("dyn.setResults\((.+)\);</script>", html)
-                if match:
-                    init = unicode(match.group(1), errors="ignore")
-                    tokens = init.split('],[')
-                    for token in tokens:
-                        res = ImageResult()
-                        res.page = i
-                        res.index = j
-                        toks = token.split(",")
+    for i in range(pages):
+        url = get_image_search_url(query, image_options, i)
+        html = get_html(url)
+        if html:
+            if Google.DEBUG_MODE:
+                write_html_to_file(
+                    html, "images_{0}_{1}.html".format(query.replace(" ", "_"), i))
+            j = 0
+            soup = BeautifulSoup(html)
+            match = re.search("dyn.setResults\((.+)\);</script>", html)
+            if match:
+                init = unicode(match.group(1), errors="ignore")
+                tokens = init.split('],[')
+                for token in tokens:
+                    res = ImageResult()
+                    res.page = i
+                    res.index = j
+                    toks = token.split(",")
 
-                        # should be 32 or 33, but seems to change, so just make sure no exceptions
-                        # will be thrown by the indexing
-                        if (len(toks) > 22):
-                            for t in range(len(toks)):
-                                toks[t] = toks[t].replace('\\x3cb\\x3e', '').replace(
-                                    '\\x3c/b\\x3e', '').replace('\\x3d', '=').replace('\\x26', '&')
-                            match = re.search(
-                                "imgurl=(?P<link>[^&]+)&imgrefurl", toks[0])
-                            if match:
-                                res.link = match.group("link")
-                            res.name = toks[6].replace('"', '')
-                            res.thumb = toks[21].replace('"', '')
-                            res.format = toks[10].replace('"', '')
-                            res.domain = toks[11].replace('"', '')
-                            match = re.search(
-                                "(?P<width>[0-9]+) &times; (?P<height>[0-9]+) - (?P<size>[^ ]+)", toks[9].replace('"', ''))
-                            if match:
-                                res.width = match.group("width")
-                                res.height = match.group("height")
-                                res.filesize = match.group("size")
-                            results.append(res)
-                            j = j + 1
+                    # should be 32 or 33, but seems to change, so just make sure no exceptions
+                    # will be thrown by the indexing
+                    if (len(toks) > 22):
+                        for t in range(len(toks)):
+                            toks[t] = toks[t].replace('\\x3cb\\x3e', '').replace(
+                                '\\x3c/b\\x3e', '').replace('\\x3d', '=').replace('\\x26', '&')
+                        match = re.search(
+                            "imgurl=(?P<link>[^&]+)&imgrefurl", toks[0])
+                        if match:
+                            res.link = match.group("link")
+                        res.name = toks[6].replace('"', '')
+                        res.thumb = toks[21].replace('"', '')
+                        res.format = toks[10].replace('"', '')
+                        res.domain = toks[11].replace('"', '')
+                        match = re.search(
+                            "(?P<width>[0-9]+) &times; (?P<height>[0-9]+) - (?P<size>[^ ]+)", toks[9].replace('"', ''))
+                        if match:
+                            res.width = match.group("width")
+                            res.height = match.group("height")
+                            res.filesize = match.group("size")
+                        results.append(res)
+                        j = j + 1
     return results
 
 
@@ -234,76 +250,77 @@ def search(query, image_options=None, images=50):
     """Main method to search images in google."""
 
     results = set()
-        curr_img = 0
-        page = 0
-        while curr_img < images:
+    curr_img = 0
+    page = 0
+    while curr_img < images:
 
-            page += 1
-            url = _get_image_search_url(query, image_options, page)
-            html = get_html_from_dynamic_site(url)
+        page += 1
+        url = _get_image_search_url(query, image_options, page)
+        html = get_html_from_dynamic_site(url)
+        write_html_to_file(html, "test_search_images.html")
 
-            if html:
+        if html:
 
-                # parse html into bs
-                soup = BeautifulSoup(html)
+            # parse html into bs
+            soup = BeautifulSoup(html)
 
-                # find all divs containing an image
-                div_container = soup.find("div", {"id": "rg_s"})
-                divs = div_container.find_all("div", {"class": "rg_di"})
-                j = 0
-                for div in divs:
+            # find all divs containing an image
+            div_container = soup.find("div", {"id": "rg_s"})
+            divs = div_container.find_all("div", {"class": "rg_di"})
+            j = 0
+            for div in divs:
 
-                    # try:
-                    res = ImageResult()
+                # try:
+                res = ImageResult()
 
-                    # store indexing paramethers
-                    res.page = page
-                    res.index = j
+                # store indexing paramethers
+                res.page = page
+                res.index = j
 
-                    # get url of image and its paramethers
-                    a = div.find("a")
-                    if a:
-                        google_middle_link = a["href"]
-                        url_parsed = urlparse.urlparse(google_middle_link)
-                        qry_parsed = urlparse.parse_qs(url_parsed.query)
-                        res.link = qry_parsed["imgurl"][0]
-                        res.format = Google._parse_image_format(res.link)
-                        res.width = qry_parsed["w"][0]
-                        res.height = qry_parsed["h"][0]
-                        res.site = qry_parsed["imgrefurl"][0]
-                        res.domain = urlparse.urlparse(res.site).netloc
+                # get url of image and its paramethers
+                a = div.find("a")
+                if a:
+                    google_middle_link = a["href"]
+                    url_parsed = urlparse.urlparse(google_middle_link)
+                    qry_parsed = urlparse.parse_qs(url_parsed.query)
+                    res.link = qry_parsed["imgurl"][0]
+                    res.format = _parse_image_format(res.link)
+                    res.width = qry_parsed["w"][0]
+                    res.height = qry_parsed["h"][0]
+                    res.site = qry_parsed["imgrefurl"][0]
+                    res.domain = urlparse.urlparse(res.site).netloc
 
-                    # get url of thumb and its size paramethers
-                    img = a.find_all("img")
-                    if img:
+                # get url of thumb and its size paramethers
+                img = a.find_all("img")
+                if img:
 
-                        # get url trying "src" and "data-src" keys
-                        try:
-                            res.thumb = img[0]["src"]
-                        except:
-                            res.thumb = img[0]["data-src"]
+                    # get url trying "src" and "data-src" keys
+                    try:
+                        res.thumb = img[0]["src"]
+                    except:
+                        res.thumb = img[0]["data-src"]
 
-                        try:
-                            img_style = img[0]["style"].split(";")
-                            img_style_dict = {i.split(":")[0]: i.split(":")[1]
-                                              for i in img_style}
-                            res.thumb_width = img_style_dict["width"]
-                            res.thumb_height = img_style_dict["height"]
-                        except:
-                            exc_type, exc_value, exc_traceback = sys.exc_info()
-                            print exc_type, exc_value, "index=", res.index
+                    try:
+                        img_style = img[0]["style"].split(";")
+                        img_style_dict = {i.split(":")[0]: i.split(":")[1]
+                                          for i in img_style}
+                        res.thumb_width = img_style_dict["width"]
+                        res.thumb_height = img_style_dict["height"]
+                    except:
+                        exc_type, exc_value, exc_traceback = sys.exc_info()
+                        print exc_type, exc_value, "index=", res.index
 
-                    prev_num_results = len(results)
-                    results.add(res)
-                    curr_num_results = len(results)
+                prev_num_results = len(results)
+                results.add(res)
+                curr_num_results = len(results)
 
-                    # increment image counter only if new image was added
-                    images_added = curr_num_results - prev_num_results
-                    curr_img += images_added
-                    if curr_img >= images:
-                        break
+                # increment image counter only if new image was added
+                images_added = curr_num_results - prev_num_results
+                curr_img += images_added
+                if curr_img >= images:
+                    break
 
-                    j = j + 1
+                j = j + 1
 
     return set(results)
 
