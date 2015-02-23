@@ -51,7 +51,7 @@ GoogleResult:
     self.page # What page this result was on (When searching more than one page)
     self.index # What index on this page it was on
 ```
-    
+
 
 ## Google Calculator
 Attempts to search google calculator for the result of an expression. Returns a `CalculatorResult` if successful or `None` if it fails.
@@ -68,7 +68,7 @@ Google.calculate("157.3kg in grams")
  'value': u'157300'}
 ```
 
-    
+
 ```python
 Google.calculate("cos(25 pi) / 17.4")
 ```
@@ -80,20 +80,21 @@ Google.calculate("cos(25 pi) / 17.4")
  'unit': None,
  'value': u'-0.0574712644'}
 ```
-    
+
 ## Google Image Search
 Searches google images for a list of images.  Image searches can be filtered to produce better results.
 
 Perform a google image search on "banana" and filter it:
 
 ```python
-options = ImageOptions()
-options.image_type = ImageType.CLIPART
-options.larger_than = LargerThan.MP_4
+from google import google, images
+options = images.ImageOptions()
+options.image_type = images.ImageType.CLIPART
+options.larger_than = images.LargerThan.MP_4
 options.color = "green"
-results = Google.search_images("banana", options)
+results = google.Google.search_images("banana", options)
 ```
-    
+
 Sample Result:
 
 ```python
@@ -108,10 +109,10 @@ Sample Result:
  'thumb': u'http://t3.gstatic.com/images?q=tbn:ANd9GcRzvAUW0en9eZTag3giWelcQ_xbrnBMXVChb3RU3v4HtEgxN3RMS0bSdidf',
  'width': u'3104'}
 ```
-     
+
 Filter options:
 
-```python        
+```python
 ImageOptions:
     image_type # face, body, clipart, line drawing
     size_category # large, small, icon
@@ -121,7 +122,7 @@ ImageOptions:
     color_type # color, b&w, specific
     color # blue, green, red
 ```
-        
+
 Enums of values that can be used to filter image searches:
 
 ```python
@@ -131,7 +132,7 @@ class ImageType:
     PHOTO = "photo"
     CLIPART = "clipart"
     LINE_DRAWING = "lineart"
-    
+
 class SizeCategory:
     NONE = None
     ICON = "i"
@@ -140,7 +141,7 @@ class SizeCategory:
     SMALL = "s"
     LARGER_THAN = "lt"
     EXACTLY = "ex"
-    
+
 class LargerThan:
     NONE = None
     QSVGA = "qsvga" # 400 x 300

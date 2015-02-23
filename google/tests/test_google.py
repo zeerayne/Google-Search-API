@@ -11,7 +11,7 @@ class GoogleTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    @unittest.skip("skip")
+    # @unittest.skip("skip")
     def test_search_images(self):
         """Test method to search images."""
 
