@@ -20,64 +20,14 @@ except ImportError:
 __author__ = "Anthony Casagrande <birdapi@gmail.com>, Agustin Benassi <agusbenassi@gmail.com>"
 __version__ = "1.0.0"
 
-"""
-Represents a standard google search result
-"""
 
-
-class GoogleResult:
-
-    def __init__(self):
-        self.name = None
-        self.link = None
-        self.description = None
-        self.thumb = None
-        self.cached = None
-        self.page = None
-        self.index = None
-
-    def __repr__(self):
-        list_google = ["Name: ", self.name,
-                       "\nLink: ", self.link]
-        return "".join(list_google)
-
-"""
-Represents a result returned from google calculator
-"""
-
-
-class CalculatorResult:
-
-    def __init__(self):
-        self.value = None
-        self.unit = None
-        self.expr = None
-        self.result = None
-        self.fullstring = None
-
-
-class ShoppingResult:
-
-    def __init__(self):
-        self.name = None
-        self.link = None
-        self.thumb = None
-        self.subtext = None
-        self.description = None
-        self.compare_url = None
-        self.store_count = None
-        self.min_price = None
-
-"""
-Represents a google image search result
-"""
-
-
+# GLOBAL PUBLIC METHODS
 def download_images(image_results, path=None):
     """Download a list of images.
 
     Args:
-        images_list: A list of ImageResult instances
+        images_list: a list of ImageResult instances
+        path: path to store downloaded images.
     """
 
     total_images = len(image_results)
@@ -93,7 +43,56 @@ def download_images(image_results, path=None):
         i += 1
 
 
+# RESULT CLASSES
+class GoogleResult:
+
+    """Represents a google search result."""
+
+    def __init__(self):
+        self.name = None
+        self.link = None
+        self.description = None
+        self.thumb = None
+        self.cached = None
+        self.page = None
+        self.index = None
+
+    def __repr__(self):
+        list_google = ["Name: ", self.name,
+                       "\nLink: ", self.link]
+        return "".join(list_google)
+
+
+class CalculatorResult:
+
+    """Represents a result returned from google calculator."""
+
+    def __init__(self):
+        self.value = None
+        self.unit = None
+        self.expr = None
+        self.result = None
+        self.fullstring = None
+
+
+class ShoppingResult:
+
+    """Represents a shopping result."""
+
+    def __init__(self):
+        self.name = None
+        self.link = None
+        self.thumb = None
+        self.subtext = None
+        self.description = None
+        self.compare_url = None
+        self.store_count = None
+        self.min_price = None
+
+
 class ImageResult:
+
+    """Represents a google image search result."""
 
     ROOT_FILENAME = "img"
     DEFAULT_FORMAT = "jpg"
@@ -609,7 +608,7 @@ def get_image_search_url(query, image_options=None, page=0, per_page=20):
         "+", "%2B").replace("&", "%26").replace(" ", "+")
 
     # url = "http://images.google.com/images?q=%s&sa=N&start=%i&ndsp=%i&sout=1" % (
-            # query, page * per_page, per_page)
+    # query, page * per_page, per_page)
     # TRYING NEW URL
     url = "https://www.google.com.ar/search?q={}".format(query) + \
           "&es_sm=122&source=lnms" + \

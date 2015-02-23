@@ -11,6 +11,8 @@ deploy:
   user: beni
   password:
     secure: ib4iaqycgcF3ijSC...
+  on:
+    tags: true
 install:
   - pip install -r requirements.txt
   - python setup.py install
