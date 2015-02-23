@@ -61,6 +61,9 @@ class ShoppingResult:
         self.store_count = None
         self.min_price = None
 
+    def __repr__(self):
+        return self.name
+
 
 class Google:
 
