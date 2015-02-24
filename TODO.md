@@ -8,6 +8,7 @@ Todo list for Google-Search-API
 - [ ] Write tests for future methods development (they should failed and be skipped up to the proper method development moment)
 - [ ] Be able to manage both Chrome and Firefox, and maybe Ie too, depending in what browser the user has
 - [ ] Write a full suite of docs test and unit tests
+- [ ] Reconvert all comments following the google python style guide https://google-styleguide.googlecode.com/svn/trunk/pyguide.html
 
 ## Stuff to check out later on
 

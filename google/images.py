@@ -179,7 +179,7 @@ def _parse_image_format(image_link):
     return parsed_format
 
 
-def _get_image_search_url(query, image_options=None, page=0, per_page=20):
+def _get_images_req_url(query, image_options=None, page=0, per_page=20):
     query = query.strip().replace(":", "%3A").replace(
         "+", "%2B").replace("&", "%26").replace(" ", "+")
 
@@ -255,7 +255,7 @@ def search(query, image_options=None, images=50):
     while curr_img < images:
 
         page += 1
-        url = _get_image_search_url(query, image_options, page)
+        url = _get_images_req_url(query, image_options, page)
         html = get_html_from_dynamic_site(url)
         # write_html_to_file(html, "test_search_images.html")
 
