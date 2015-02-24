@@ -53,22 +53,6 @@ class GoogleTest(unittest.TestCase):
         self.assertNotEqual(len(shop), 0)
 
 
-class ConvertCurrencyTest(unittest.TestCase):
-
-    # @unittest.skip("skip")
-    def test_get_currency_req_url(self):
-        """Test method to get currency conversion request url."""
-
-        amount = 10
-        from_currency = "USD"
-        to_currency = "EUR"
-        req_url = google.Google._get_currency_req_url(amount, from_currency,
-                                                      to_currency)
-
-        expected_req_url = "https://www.google.com/finance/converter?a=10&from=USD&to=EUR"
-
-        self.assertEqual(req_url, expected_req_url)
-
-
 if __name__ == '__main__':
-    nose.main()
+    # nose.main()
+    nose.run(defaultTest=__name__)

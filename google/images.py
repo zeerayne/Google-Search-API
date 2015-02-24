@@ -16,6 +16,49 @@ IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",
                  "jpeg", "jif", "jfif", "jp2", "jpx", "j2k", "j2c", "fpx",
                  "pcd", "png", "pdf"]
 
+class ImageType:
+    NONE = None
+    FACE = "face"
+    PHOTO = "photo"
+    CLIPART = "clipart"
+    LINE_DRAWING = "lineart"
+
+
+class SizeCategory:
+    NONE = None
+    ICON = "i"
+    LARGE = "l"
+    MEDIUM = "m"
+    SMALL = "s"
+    LARGER_THAN = "lt"
+    EXACTLY = "ex"
+
+
+class LargerThan:
+    NONE = None
+    QSVGA = "qsvga"  # 400 x 300
+    VGA = "vga"     # 640 x 480
+    SVGA = "svga"   # 800 x 600
+    XGA = "xga"     # 1024 x 768
+    MP_2 = "2mp"    # 2 MP (1600 x 1200)
+    MP_4 = "4mp"    # 4 MP (2272 x 1704)
+    MP_6 = "6mp"    # 6 MP (2816 x 2112)
+    MP_8 = "8mp"    # 8 MP (3264 x 2448)
+    MP_10 = "10mp"  # 10 MP (3648 x 2736)
+    MP_12 = "12mp"  # 12 MP (4096 x 3072)
+    MP_15 = "15mp"  # 15 MP (4480 x 3360)
+    MP_20 = "20mp"  # 20 MP (5120 x 3840)
+    MP_40 = "40mp"  # 40 MP (7216 x 5412)
+    MP_70 = "70mp"  # 70 MP (9600 x 7200)
+
+
+class ColorType:
+    NONE = None
+    COLOR = "color"
+    BLACK_WHITE = "gray"
+    SPECIFIC = "specific"
+
+
 class ImageOptions:
 
     """Allows passing options to filter a google images search."""
