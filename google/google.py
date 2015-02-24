@@ -3,6 +3,7 @@ import httplib
 import urllib2
 import re
 import images
+import currency
 
 try:
     import json
@@ -271,34 +272,7 @@ class Google:
             from_currency: currency denomination of the amount to convert
             to_currency: target currency denomination to convert to
         """
-
-        # same currency, no conversion
-        if from_currency == to_currency:
-            return amount * 1.0
-
-        req_url = Google._get_currency_req_url(amount,
-                                               from_currency, to_currency)
-        response = Google._do_currency_req(req_url)
-        rate = Google._parse_currency_response(response, to_currency)
-
-        return rate
-
-    @staticmethod
-    def _get_currency_req_url(amount, from_currency, to_currency):
-        return "https://www.google.com/finance/converter?a={0}&from={1}&to={2}".format(
-            amount, from_currency.replace(" ", "%20"),
-            to_currency.replace(" ", "%20"))
-
-    @staticmethod
-    def _do_currency_req(req_url):
-        return urllib2.urlopen(req_url).read()
-
-    @staticmethod
-    def _parse_currency_response(response, to_currency):
-        bs = BeautifulSoup(response)
-        str_rate = bs.find(id="currency_converter_result").span.get_text()
-        rate = float(str_rate.replace(to_currency, "").strip())
-        return rate
+        return currency.convert_currency(amount, from_currency, to_currency)
 
     @staticmethod
     def exchange_rate(from_currency, to_currency):
@@ -311,7 +285,7 @@ class Google:
         Returns:
             rate / 1 to convert from_currency in to_currency
         """
-        return Google.convert_currency(1, from_currency, to_currency)
+        return currency.exchange_rate(from_currency, to_currency)
 
     @staticmethod
     def calculate(expr):

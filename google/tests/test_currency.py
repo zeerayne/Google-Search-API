@@ -11,6 +11,7 @@ class ConvertCurrencyTest(unittest.TestCase):
         euros = currency.convert_currency(5.0, "USD", "EUR")
         self.assertGreater(euros, 0.0)
 
+    # @unittest.skip("skip")
     def test_exchange_rate(self):
         """Test method to get an exchange rate in currency module."""
 
@@ -33,7 +34,7 @@ class ConvertCurrencyTest(unittest.TestCase):
 
     @unittest.skip("skip")
     def test_parse_currency_response(self):
-        """Test method to parse currency response."""
+        """Test method to parse currency response. TODO!"""
         pass
 
 
