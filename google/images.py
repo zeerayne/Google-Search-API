@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import urlparse
 
 
+# GLOBAL AUXILIARY METHODS AND DATA
 def write_html_to_file(html, filename):
     of = open(filename, "w")
     of.write(html.encode("utf-8"))
@@ -10,12 +11,13 @@ def write_html_to_file(html, filename):
     of.close()
 
 
-
 IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",
                  "tif", "yuv", "ai", "drw", "eps", "ps", "svg", "tiff",
                  "jpeg", "jif", "jfif", "jp2", "jpx", "j2k", "j2c", "fpx",
                  "pcd", "png", "pdf"]
 
+
+# AUXILIARY CLASSES
 class ImageType:
     NONE = None
     FACE = "face"
@@ -193,7 +195,7 @@ class ImageResult:
             os.mkdir(path)
 
 
-# PRIVATE METHODS
+# PRIVATE
 def _parse_image_format(image_link):
     """Parse an image format from a download link.
 
@@ -242,7 +244,7 @@ def _get_images_req_url(query, image_options=None, page=0, per_page=20):
     return url
 
 
-# PUBLIC METHODS
+# PUBLIC
 def search_old(query, image_options=None, pages=1):
     results = []
     for i in range(pages):
