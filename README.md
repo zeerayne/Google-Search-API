@@ -3,7 +3,7 @@ Google Search API
 
 *The original package was developed by Anthony Casagrande and can be downloaded at https://github.com/BirdAPI This is a forked package that I will continue maintaining in the foreseeable future*
 
-Google Search API is a python based library for searching various functionalities of google.  It uses screen scraping to retrieve the results, and thus is unreliable if the way google's web pages are returned change in the future.
+Google Search API is a python based library for searching various functionalities of google.  It uses screen scraping to retrieve the results, and thus is unreliable if the way google's web pages are returned change in the future. This package is currently under heavy refactoring so changes in the user interface should be expected for the time being.
 
 *Disclaimer: This software uses screen scraping to retrieve search results from google.com, and therefore this software may stop working at any given time.  Use this software at your own risk. I assume no responsibility for how this software API is used by others.*
 
@@ -14,13 +14,13 @@ The repo is structured like a package, so it can be installed from pip using
 github clone url. From command line type:
 
 ```
-pip install git+https://github.com/abenassi/Google-Search-API.git
+pip install Google-Search-API
 ```
 
 To upgrade the package if you have already installed it:
 
 ```
-pip install git+https://github.com/abenassi/Google-Search-API.git --upgrade
+pip install Google-Search-API --upgrade
 ```
 
 You could also just download or clone the repo and import the package from
@@ -29,14 +29,15 @@ Google-Search-API folder.
 ```python
 import os
 os.chdir("C:\Path_where_repo_is")
-import google_search_api
+import google
 ```
 
 ## Google Web Search
 You can search google web in the following way:
 
 ```python
-search_results = Google.search("This is my query")
+from google import google
+search_results = google.Google.search("This is my query")
 ```
 
 `search_results` will contain a list of `GoogleResult` objects
@@ -57,7 +58,8 @@ GoogleResult:
 Attempts to search google calculator for the result of an expression. Returns a `CalculatorResult` if successful or `None` if it fails.
 
 ```python
-Google.calculate("157.3kg in grams")
+from google import google
+google.Google.calculate("157.3kg in grams")
 ```
 
 ```python
@@ -70,7 +72,8 @@ Google.calculate("157.3kg in grams")
 
 
 ```python
-Google.calculate("cos(25 pi) / 17.4")
+from google import google
+google.Google.calculate("cos(25 pi) / 17.4")
 ```
 
 ```python
@@ -172,7 +175,8 @@ Convert between one currency and another using google calculator. Results are re
 Convert 5 US Dollars to Euros using the official 3 letter currency acronym:
 
 ```python
-euros = Google.convert_currency(5.0, "USD", "EUR")
+from google import google
+euros = google.Google.convert_currency(5.0, "USD", "EUR")
 print "5.0 USD = {0} EUR".format(euros)
 ```
 
@@ -183,7 +187,7 @@ print "5.0 USD = {0} EUR".format(euros)
 Convert 1000 Japanese Yen to US Dollars:
 
 ```python
-yen = Google.convert_currency(1000, "yen", "us dollars")
+yen = google.Google.convert_currency(1000, "yen", "us dollars")
 print "1000 yen = {0} us dollars".format(yen)
 ```
 
@@ -194,7 +198,7 @@ print "1000 yen = {0} us dollars".format(yen)
 Instead you can get the exchange rate which returns what 1 `from_currency` equals in `to_currency` and do your own math:
 
 ```python
-rate = Google.exchange_rate("dollars", "pesos")
+rate = google.Google.exchange_rate("dollars", "pesos")
 print "dollars -> pesos exchange rate = {0}".format(rate)
 ```
 
@@ -205,11 +209,11 @@ dollars -> pesos exchange rate = 13.1580679
 Perform your own math. The following 2 statements are equal:
 
 ```python
-5.0 * Google.exchange_rate("USD", "EUR")
+5.0 * google.Google.exchange_rate("USD", "EUR")
 ```
 
 ```python
-Google.convert_currency(5.0, "USD", "EUR")
+google.Google.convert_currency(5.0, "USD", "EUR")
 ```
 
 As a side note, `convert_currency` is always more accurate than performing your own math on `exchange_rate` because of possible rounding errors. However if you have more than one value to convert it is best to call `exchange_rate` and cache the result to use for multiple calculations instead of querying the google server for each one.
