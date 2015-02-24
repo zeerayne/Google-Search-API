@@ -291,13 +291,13 @@ def search_old(query, image_options=None, pages=1):
     return results
 
 
-def search(query, image_options=None, images=50):
+def search(query, image_options=None, num_images=50):
     """Main method to search images in google."""
 
     results = set()
-    curr_img = 0
+    curr_num_img = 0
     page = 0
-    while curr_img < images:
+    while curr_num_img < num_images:
 
         page += 1
         url = _get_images_req_url(query, image_options, page)
@@ -361,8 +361,8 @@ def search(query, image_options=None, images=50):
 
                 # increment image counter only if new image was added
                 images_added = curr_num_results - prev_num_results
-                curr_img += images_added
-                if curr_img >= images:
+                curr_num_img += images_added
+                if curr_num_img >= num_images:
                     break
 
                 j = j + 1

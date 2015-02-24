@@ -187,27 +187,13 @@ class Google:
                         return parse_calc_result(h2.text)
         return None
 
-    @staticmethod
-    def search_images_old(query, image_options=None, pages=1):
-        """Old method to search images in google."""
+    search_images_old = staticmethod(images.search_old)
 
-        return images.search_old(query, image_options, pages)
+    search_images = staticmethod(images.search)
 
-    @staticmethod
-    def search_images(query, image_options=None, num_images=50):
-        """Search images in google.
+    convert_currency = staticmethod(currency.convert)
 
-        # >>> results = Google.search_images("banana")
-        # <type 'exceptions.KeyError'> 'style' index= 97
-        # <type 'exceptions.KeyError'> 'style' index= 98
-        # <type 'exceptions.KeyError'> 'style' index= 99
-        # >>> len(results)
-        # 100
-        # >>> isinstance(results[0], ImageResult)
-        # True
-        """
-
-        return images.search(query, image_options, num_images)
+    exchange_rate = staticmethod(currency.exchange_rate)
 
     @staticmethod
     def shopping(query, pages=1):
@@ -262,30 +248,6 @@ class Google:
     @staticmethod
     def _get_shopping_url(query, page=0, per_page=10):
         return "http://www.google.com/search?hl=en&q={0}&tbm=shop&start={1}&num={2}".format(normalize_query(query), page * per_page, per_page)
-
-    @staticmethod
-    def convert_currency(amount, from_currency, to_currency):
-        """Method to convert currency.
-
-        Args:
-            amount: numeric amount to convert
-            from_currency: currency denomination of the amount to convert
-            to_currency: target currency denomination to convert to
-        """
-        return currency.convert_currency(amount, from_currency, to_currency)
-
-    @staticmethod
-    def exchange_rate(from_currency, to_currency):
-        """Gets the exchange rate of one currency to another.
-
-        Args:
-            from_currency: starting currency denomination (1)
-            to_currency: target currency denomination to convert to (rate)
-
-        Returns:
-            rate / 1 to convert from_currency in to_currency
-        """
-        return currency.exchange_rate(from_currency, to_currency)
 
     @staticmethod
     def calculate(expr):

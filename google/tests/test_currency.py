@@ -5,10 +5,10 @@ from google import currency
 
 class ConvertCurrencyTest(unittest.TestCase):
 
-    def test_convert_currency(self):
+    def test_convert(self):
         """Test method to convert currency in currency module."""
 
-        euros = currency.convert_currency(5.0, "USD", "EUR")
+        euros = currency.convert(5.0, "USD", "EUR")
         self.assertGreater(euros, 0.0)
 
     # @unittest.skip("skip")
