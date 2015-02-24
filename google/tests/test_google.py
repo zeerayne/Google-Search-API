@@ -19,11 +19,11 @@ class GoogleTest(unittest.TestCase):
         res = google.Google.search_images("apple", num_images=10)
         self.assertEqual(len(res), 10)
 
-    @unittest.skip("skip")
+    # @unittest.skip("skip")
     def test_exchange_rate(self):
         """Test method to get an exchange rate in google."""
 
-        usd_to_eur = google.Google.convert_currency("USD", "EUR")
+        usd_to_eur = google.Google.exchange_rate("USD", "EUR")
         self.assertGreater(usd_to_eur, 0.0)
 
     # @unittest.skip("skip")
