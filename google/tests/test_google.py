@@ -40,7 +40,7 @@ class GoogleTest(unittest.TestCase):
 
         # replace method to get html with a test html file
         f = open('test_calculator.html', 'r')
-        google.get_html_from_dynamic_site = \
+        google.calculator.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
 
         calc = google.Google.calculate("157.3kg in grams")

@@ -1,14 +1,6 @@
-from utils import get_html_from_dynamic_site
+from utils import get_html_from_dynamic_site, write_html_to_file
 from bs4 import BeautifulSoup
 import urlparse
-
-
-# GLOBAL AUXILIARY METHODS AND DATA
-def write_html_to_file(html, filename):
-    of = open(filename, "w")
-    of.write(html.encode("utf-8"))
-    # of.flush()
-    of.close()
 
 
 IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",

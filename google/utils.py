@@ -1,6 +1,35 @@
 import time
 from selenium import webdriver
-from bs4 import BeautifulSoup
+import urllib2
+
+
+def normalize_query(query):
+    return query.strip().replace(":", "%3A").replace("+", "%2B").replace("&", "%26").replace(" ", "+")
+
+
+def _get_search_url(query, page=0, per_page=10):
+    # note: num per page might not be supported by google anymore (because of
+    # google instant)
+    return "http://www.google.com/search?hl=en&q=%s&start=%i&num=%i" % (normalize_query(query), page * per_page, per_page)
+
+
+def get_html(url):
+    try:
+        request = urllib2.Request(url)
+        request.add_header(
+            "User-Agent", "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101")
+        html = urllib2.urlopen(request).read()
+        return html
+    except:
+        print "Error accessing:", url
+        return None
+
+
+def write_html_to_file(html, filename):
+    of = open(filename, "w")
+    of.write(html.encode("utf-8"))
+    # of.flush()
+    of.close()
 
 
 def get_browser_with_url(url, timeout=120, driver="firefox"):
@@ -27,7 +56,8 @@ def get_browser_with_url(url, timeout=120, driver="firefox"):
     return browser
 
 
-def get_html_from_dynamic_site(url, timeout=120, driver="firefox", attempts=10):
+def get_html_from_dynamic_site(url, timeout=120,
+                               driver="firefox", attempts=10):
     """Returns html from a dynamic site, opening it in a browser."""
 
     RV = ""

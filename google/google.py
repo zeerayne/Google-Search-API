@@ -1,15 +1,10 @@
 from bs4 import BeautifulSoup
-import httplib
-import urllib2
 import re
 import images
 import currency
-from utils import get_html_from_dynamic_site
+import calculator
+from utils import write_html_to_file, _get_search_url, get_html, normalize_query
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 __author__ = "Anthony Casagrande <birdapi@gmail.com>, " + \
     "Agustin Benassi <agusbenassi@gmail.com>"
@@ -17,8 +12,6 @@ __version__ = "1.0.0"
 
 
 # GLOBAL METHODS
-def normalize_query(query):
-    return query.strip().replace(":", "%3A").replace("+", "%2B").replace("&", "%26").replace(" ", "+")
 
 
 def add_to_tbs(tbs, name, value):
@@ -28,29 +21,6 @@ def add_to_tbs(tbs, name, value):
         return "&tbs=%s:%s" % (name, value)
 
 
-def parse_calc_result(string):
-    result = CalculatorResult()
-    result.fullstring = string
-    string = string.strip().replace(u"\xa0", " ")
-    if string.find("=") != -1:
-        result.expr = string[:string.rfind("=")].strip()
-        string = string[string.rfind("=") + 2:]
-        result.result = string
-    tokens = string.split(" ")
-    if len(tokens) > 0:
-        result.value = ""
-        for token in tokens:
-            if is_number(token):
-                result.value = result.value + token
-            else:
-                if result.unit:
-                    result.unit = result.unit + " " + token
-                else:
-                    result.unit = token
-        return result
-    return None
-
-
 def is_number(s):
     try:
         float(s)
@@ -58,24 +28,6 @@ def is_number(s):
     except ValueError:
         return False
 
-
-def get_html(url):
-    try:
-        request = urllib2.Request(url)
-        request.add_header(
-            "User-Agent", "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101")
-        html = urllib2.urlopen(request).read()
-        return html
-    except:
-        print "Error accessing:", url
-        return None
-
-
-def write_html_to_file(html, filename):
-    of = open(filename, "w")
-    of.write(html.encode("utf-8"))
-    # of.flush()
-    of.close()
 
 # RESULT CLASSES
 class GoogleResult:
@@ -95,18 +47,6 @@ class GoogleResult:
         list_google = ["Name: ", self.name,
                        "\nLink: ", self.link]
         return "".join(list_google)
-
-
-class CalculatorResult:
-
-    """Represents a result returned from google calculator."""
-
-    def __init__(self):
-        self.value = None
-        self.unit = None
-        self.expr = None
-        self.result = None
-        self.fullstring = None
 
 
 class ShoppingResult:
@@ -140,7 +80,7 @@ class Google:
 
         results = []
         for i in range(pages):
-            url = Google._get_search_url(query, i)
+            url = _get_search_url(query, i)
             html = get_html(url)
             if html:
                 if Google.DEBUG_MODE:
@@ -166,27 +106,6 @@ class Google:
                     j = j + 1
         return results
 
-    @staticmethod
-    def _get_search_url(query, page=0, per_page=10):
-        # note: num per page might not be supported by google anymore (because of
-        # google instant)
-        return "http://www.google.com/search?hl=en&q=%s&start=%i&num=%i" % (normalize_query(query), page * per_page, per_page)
-
-    @staticmethod
-    def calculate_old(expr):
-        url = Google._get_search_url(expr)
-        html = get_html(url)
-        if html:
-            soup = BeautifulSoup(html)
-            topstuff = soup.find("div", id="topstuff")
-            if topstuff:
-                a = topstuff.find("a")
-                if a and a["href"].find("calculator") != -1:
-                    h2 = topstuff.find("h2")
-                    if h2:
-                        return parse_calc_result(h2.text)
-        return None
-
     search_images_old = staticmethod(images.search_old)
 
     search_images = staticmethod(images.search)
@@ -194,6 +113,8 @@ class Google:
     convert_currency = staticmethod(currency.convert)
 
     exchange_rate = staticmethod(currency.exchange_rate)
+
+    calculate = staticmethod(calculator.calculate)
 
     @staticmethod
     def shopping(query, pages=1):
@@ -248,20 +169,6 @@ class Google:
     @staticmethod
     def _get_shopping_url(query, page=0, per_page=10):
         return "http://www.google.com/search?hl=en&q={0}&tbm=shop&start={1}&num={2}".format(normalize_query(query), page * per_page, per_page)
-
-    @staticmethod
-    def calculate(expr):
-        url = Google._get_search_url(expr)
-        html = get_html_from_dynamic_site(url)
-        bs = BeautifulSoup(html)
-
-        from_value = float(bs.find("input", {"id":"ucw_lhs_d"})["value"])
-        to_value = float(bs.find("input", {"id":"ucw_rhs_d"})["value"])
-
-        gr = GoogleResult()
-        gr.value = to_value
-
-        return gr
 
 
 if __name__ == "__main__":
