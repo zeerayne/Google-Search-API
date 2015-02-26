@@ -7,14 +7,15 @@ from mock import Mock
 class GoogleTest(unittest.TestCase):
 
     def setUp(self):
+        pass
+
+    def test_search_images(self):
+        """Test method to search images."""
 
         # replace method to get html with a test html file
         f = open('test_search_images.html', 'r')
         google.images.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
-
-    def test_search_images(self):
-        """Test method to search images."""
 
         res = google.Google.search_images("apple", num_images=10)
         self.assertEqual(len(res), 10)
@@ -33,9 +34,14 @@ class GoogleTest(unittest.TestCase):
         euros = google.Google.convert_currency(5.0, "USD", "EUR")
         self.assertGreater(euros, 0.0)
 
-    @unittest.skip("skip")
+    # @unittest.skip("skip")
     def test_calculate(self):
         """Test method to calculate in google."""
+
+        # replace method to get html with a test html file
+        f = open('test_calculator.html', 'r')
+        google.get_html_from_dynamic_site = \
+            Mock(return_value=f.read().decode('utf8'))
 
         calc = google.Google.calculate("157.3kg in grams")
         self.assertEqual(calc.value, 157300)

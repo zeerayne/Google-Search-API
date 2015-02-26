@@ -4,6 +4,7 @@ import urllib2
 import re
 import images
 import currency
+from utils import get_html_from_dynamic_site
 
 try:
     import json
@@ -72,10 +73,9 @@ def get_html(url):
 
 def write_html_to_file(html, filename):
     of = open(filename, "w")
-    of.write(html)
-    of.flush()
+    of.write(html.encode("utf-8"))
+    # of.flush()
     of.close()
-
 
 # RESULT CLASSES
 class GoogleResult:
@@ -251,20 +251,17 @@ class Google:
 
     @staticmethod
     def calculate(expr):
-        conn = httplib.HTTPSConnection("www.google.com")
-        req_url = "/ig/calculator?hl=en&q={0}".format(expr.replace(" ", "%20"))
-        headers = {
-            "User-Agent": "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101"}
-        conn.request("GET", req_url, "", headers)
-        response = conn.getresponse()
-        j = response.read().decode("utf-8").replace(u"\xa0", "")
-        conn.close()
-        j = re.sub(r"{\s*'?(\w)", r'{"\1', j)
-        j = re.sub(r",\s*'?(\w)", r',"\1', j)
-        j = re.sub(r"(\w)'?\s*:", r'\1":', j)
-        j = re.sub(r":\s*'(\w)'\s*([,}])", r':"\1"\2', j)
-        js = json.loads(j)
-        return parse_calc_result(js["lhs"] + " = " + js["rhs"])
+        url = Google._get_search_url(expr)
+        html = get_html_from_dynamic_site(url)
+        bs = BeautifulSoup(html)
+
+        from_value = float(bs.find("input", {"id":"ucw_lhs_d"})["value"])
+        to_value = float(bs.find("input", {"id":"ucw_rhs_d"})["value"])
+
+        gr = GoogleResult()
+        gr.value = to_value
+
+        return gr
 
 
 if __name__ == "__main__":
