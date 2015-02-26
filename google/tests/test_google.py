@@ -17,21 +17,21 @@ class GoogleTest(unittest.TestCase):
         google.images.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
 
-        res = google.Google.search_images("apple", num_images=10)
+        res = google.search_images("apple", num_images=10)
         self.assertEqual(len(res), 10)
 
     # @unittest.skip("skip")
     def test_exchange_rate(self):
         """Test method to get an exchange rate in google."""
 
-        usd_to_eur = google.Google.exchange_rate("USD", "EUR")
+        usd_to_eur = google.exchange_rate("USD", "EUR")
         self.assertGreater(usd_to_eur, 0.0)
 
     # @unittest.skip("skip")
     def test_convert_currency(self):
         """Test method to convert currency in google."""
 
-        euros = google.Google.convert_currency(5.0, "USD", "EUR")
+        euros = google.convert_currency(5.0, "USD", "EUR")
         self.assertGreater(euros, 0.0)
 
     # @unittest.skip("skip")
@@ -43,19 +43,19 @@ class GoogleTest(unittest.TestCase):
         google.calculator.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
 
-        calc = google.Google.calculate("157.3kg in grams")
+        calc = google.calculate("157.3kg in grams")
         self.assertEqual(calc.value, 157300)
 
     def test_search(self):
         """Test method to search in google."""
 
-        search = google.Google.search("github")
+        search = google.search("github")
         self.assertNotEqual(len(search), 0)
 
     def test_shopping(self):
         """Test method for google shopping."""
 
-        shop = google.Google.shopping("Disgaea 4")
+        shop = google.shopping("Disgaea 4")
         self.assertNotEqual(len(shop), 0)
 
 
