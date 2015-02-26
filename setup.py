@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='Google-Search-API',
-      version='1.0.0',
+      version='1.1.0',
       url='https://github.com/abenassi/Google-Search-API',
       description='Search in google',
       author='Anthony Casagrande, Agustin Benassi',
