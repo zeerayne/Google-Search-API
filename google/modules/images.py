@@ -1,6 +1,9 @@
 from utils import get_html_from_dynamic_site, write_html_to_file
 from bs4 import BeautifulSoup
 import urlparse
+import sys
+import requests
+import shutil
 
 
 IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",
@@ -70,24 +73,24 @@ class ImageOptions:
         tbs = None
         if self.image_type:
             # clipart
-            tbs = add_to_tbs(tbs, "itp", self.image_type)
+            tbs = _add_to_tbs(tbs, "itp", self.image_type)
         if self.size_category and not (self.larger_than or (self.exact_width and self.exact_height)):
             # i = icon, l = large, m = medium, lt = larger than, ex = exact
-            tbs = add_to_tbs(tbs, "isz", self.size_category)
+            tbs = _add_to_tbs(tbs, "isz", self.size_category)
         if self.larger_than:
             # qsvga,4mp
-            tbs = add_to_tbs(tbs, "isz", SizeCategory.LARGER_THAN)
-            tbs = add_to_tbs(tbs, "islt", self.larger_than)
+            tbs = _add_to_tbs(tbs, "isz", SizeCategory.LARGER_THAN)
+            tbs = _add_to_tbs(tbs, "islt", self.larger_than)
         if self.exact_width and self.exact_height:
-            tbs = add_to_tbs(tbs, "isz", SizeCategory.EXACTLY)
-            tbs = add_to_tbs(tbs, "iszw", self.exact_width)
-            tbs = add_to_tbs(tbs, "iszh", self.exact_height)
+            tbs = _add_to_tbs(tbs, "isz", SizeCategory.EXACTLY)
+            tbs = _add_to_tbs(tbs, "iszw", self.exact_width)
+            tbs = _add_to_tbs(tbs, "iszh", self.exact_height)
         if self.color_type and not self.color:
             # color = color, gray = black and white, specific = user defined
-            tbs = add_to_tbs(tbs, "ic", self.color_type)
+            tbs = _add_to_tbs(tbs, "ic", self.color_type)
         if self.color:
-            tbs = add_to_tbs(tbs, "ic", ColorType.SPECIFIC)
-            tbs = add_to_tbs(tbs, "isc", self.color)
+            tbs = _add_to_tbs(tbs, "ic", ColorType.SPECIFIC)
+            tbs = _add_to_tbs(tbs, "isc", self.color)
         return tbs
 
 
@@ -112,6 +115,12 @@ class ImageResult:
         self.page = None
         self.index = None
         self.site = None
+
+    def __eq__(self, other):
+        return self.link == other.link
+
+    def __hash__(self):
+        return id(self.link)
 
     def __repr__(self):
         string = "ImageResult(" + \
@@ -188,6 +197,13 @@ class ImageResult:
 
 
 # PRIVATE
+def _add_to_tbs(tbs, name, value):
+    if tbs:
+        return "%s,%s:%s" % (tbs, name, value)
+    else:
+        return "&tbs=%s:%s" % (name, value)
+
+
 def _parse_image_format(image_link):
     """Parse an image format from a download link.
 
@@ -216,13 +232,11 @@ def _parse_image_format(image_link):
     return parsed_format
 
 
-def _get_images_req_url(query, image_options=None, page=0, per_page=20):
+def _get_images_req_url(query, image_options=None, page=0,
+                        per_page=20):
     query = query.strip().replace(":", "%3A").replace(
         "+", "%2B").replace("&", "%26").replace(" ", "+")
 
-    # url = "http://images.google.com/images?q=%s&sa=N&start=%i&ndsp=%i&sout=1" % (
-    # query, page * per_page, per_page)
-    # TRYING NEW URL
     url = "https://www.google.com.ar/search?q={}".format(query) + \
           "&es_sm=122&source=lnms" + \
           "&tbm=isch&sa=X&ei=DDdUVL-fE4SpNq-ngPgK&ved=0CAgQ_AUoAQ" + \
@@ -234,6 +248,51 @@ def _get_images_req_url(query, image_options=None, page=0, per_page=20):
             url = url + tbs
 
     return url
+
+
+def _find_divs_with_images(soup):
+    div_container = soup.find("div", {"id": "rg_s"})
+    return div_container.find_all("div", {"class": "rg_di"})
+
+
+def _get_image_data(res, a):
+    """Parse image data and write it to an ImageResult object.
+
+    Args:
+        res: An ImageResult object.
+        a: An "a" html tag.
+    """
+    google_middle_link = a["href"]
+    url_parsed = urlparse.urlparse(google_middle_link)
+    qry_parsed = urlparse.parse_qs(url_parsed.query)
+    res.link = qry_parsed["imgurl"][0]
+    res.format = _parse_image_format(res.link)
+    res.width = qry_parsed["w"][0]
+    res.height = qry_parsed["h"][0]
+    res.site = qry_parsed["imgrefurl"][0]
+    res.domain = urlparse.urlparse(res.site).netloc
+
+
+def _get_thumb_data(res, img):
+    """Parse thumb data and write it to an ImageResult object.
+
+    Args:
+        res: An ImageResult object.
+        a: An "a" html tag.
+    """
+    try:
+        res.thumb = img[0]["src"]
+    except:
+        res.thumb = img[0]["data-src"]
+
+    try:
+        img_style = img[0]["style"].split(";")
+        img_style_dict = {i.split(":")[0]: i.split(":")[1] for i in img_style}
+        res.thumb_width = img_style_dict["width"]
+        res.thumb_height = img_style_dict["height"]
+    except:
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print exc_type, exc_value, "index=", res.index
 
 
 # PUBLIC
@@ -284,82 +343,67 @@ def search_old(query, image_options=None, pages=1):
 
 
 def search(query, image_options=None, num_images=50):
-    """Main method to search images in google."""
+    """Search images in google.
+
+    Search images in google filtering by image type, size category, resolution,
+    exact width, exact height, color type or color. A simple search can be
+    performed without passing options. To filter the search, an ImageOptions
+    must be built with the different filter categories and passed.
+
+    Args:
+        query: string to search in google images
+        image_options: an ImageOptions object to filter the search
+        num_images: number of images to be scraped
+
+    Returns:
+        A list of ImageResult objects
+    """
 
     results = set()
-    curr_num_img = 0
+    curr_num_img = 1
     page = 0
-    while curr_num_img < num_images:
+    while curr_num_img <= num_images:
 
         page += 1
         url = _get_images_req_url(query, image_options, page)
         html = get_html_from_dynamic_site(url)
-        # write_html_to_file(html, "test_search_images.html")
 
         if html:
-
-            # parse html into bs
             soup = BeautifulSoup(html)
 
-            # find all divs containing an image
-            div_container = soup.find("div", {"id": "rg_s"})
-            divs = div_container.find_all("div", {"class": "rg_di"})
-            j = 0
+            # iterate over the divs containing images in one page
+            divs = _find_divs_with_images(soup)
             for div in divs:
 
-                # try:
                 res = ImageResult()
 
                 # store indexing paramethers
                 res.page = page
-                res.index = j
+                res.index = curr_num_img
 
-                # get url of image and its paramethers
+                # get url of image and its secondary data
                 a = div.find("a")
                 if a:
-                    google_middle_link = a["href"]
-                    url_parsed = urlparse.urlparse(google_middle_link)
-                    qry_parsed = urlparse.parse_qs(url_parsed.query)
-                    res.link = qry_parsed["imgurl"][0]
-                    res.format = _parse_image_format(res.link)
-                    res.width = qry_parsed["w"][0]
-                    res.height = qry_parsed["h"][0]
-                    res.site = qry_parsed["imgrefurl"][0]
-                    res.domain = urlparse.urlparse(res.site).netloc
+                    _get_image_data(res, a)
 
                 # get url of thumb and its size paramethers
                 img = a.find_all("img")
                 if img:
+                    _get_thumb_data(res, img)
 
-                    # get url trying "src" and "data-src" keys
-                    try:
-                        res.thumb = img[0]["src"]
-                    except:
-                        res.thumb = img[0]["data-src"]
-
-                    try:
-                        img_style = img[0]["style"].split(";")
-                        img_style_dict = {i.split(":")[0]: i.split(":")[1]
-                                          for i in img_style}
-                        res.thumb_width = img_style_dict["width"]
-                        res.thumb_height = img_style_dict["height"]
-                    except:
-                        exc_type, exc_value, exc_traceback = sys.exc_info()
-                        print exc_type, exc_value, "index=", res.index
-
+                # increment image counter only if a new image was added
                 prev_num_results = len(results)
                 results.add(res)
                 curr_num_results = len(results)
 
-                # increment image counter only if new image was added
-                images_added = curr_num_results - prev_num_results
-                curr_num_img += images_added
+                if curr_num_results > prev_num_results:
+                    curr_num_img += 1
+
+                # break the loop when limit of images is reached
                 if curr_num_img >= num_images:
                     break
 
-                j = j + 1
-
-    return set(results)
+    return results
 
 
 def download(image_results, path=None):

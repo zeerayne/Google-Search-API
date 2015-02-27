@@ -1,4 +1,4 @@
-import urllib2
+from utils import get_html
 from bs4 import BeautifulSoup
 
 
@@ -18,7 +18,7 @@ def convert(amount, from_currency, to_currency):
 
     req_url = _get_currency_req_url(amount,
                                     from_currency, to_currency)
-    response = _do_req(req_url)
+    response = get_html(req_url)
     rate = _parse_currency_response(response, to_currency)
 
     return rate
@@ -42,10 +42,6 @@ def _get_currency_req_url(amount, from_currency, to_currency):
     return "https://www.google.com/finance/converter?a={0}&from={1}&to={2}".format(
         amount, from_currency.replace(" ", "%20"),
         to_currency.replace(" ", "%20"))
-
-
-def _do_req(req_url):
-    return urllib2.urlopen(req_url).read()
 
 
 def _parse_currency_response(response, to_currency):

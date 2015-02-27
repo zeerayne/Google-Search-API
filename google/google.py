@@ -1,8 +1,8 @@
-import images
-import currency
-import calculator
-import standard_search
-import shopping_search
+from modules import images
+from modules import currency
+from modules import calculator
+from modules import standard_search
+from modules import shopping_search
 
 __author__ = "Anthony Casagrande <birdapi@gmail.com>, " + \
     "Agustin Benassi <agusbenassi@gmail.com>"

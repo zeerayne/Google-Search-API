@@ -4,8 +4,8 @@ Todo list for Google-Search-API
 ## Next tasks
 
 - [x] Mock html test for all search methods - https://pypi.python.org/pypi/mock/
-- [ ] Test and implement the use of images options in search images method (is broken right now, in the middle of a refactor)
-- [ ] Refactor and split main module in separated ones
+- [x] Test and implement the use of images options in search images method (is broken right now, in the middle of a re-factor)
+- [x] Re-factor and split main module in separated ones
 - [ ] Write tests for future methods development (they should failed and be skipped up to the proper method development moment)
 - [ ] Be able to manage both Chrome and Firefox, and maybe Ie too, depending in what browser the user has
 - [ ] Write a full suite of docs test and unit tests
