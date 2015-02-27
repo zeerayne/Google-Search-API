@@ -5,7 +5,7 @@ from google import currency, images
 from mock import Mock
 import os
 
-
+@unittest.skip("skip")
 class GoogleTest(unittest.TestCase):
 
     # @unittest.skip("skip")
@@ -78,7 +78,7 @@ class GoogleTest(unittest.TestCase):
         shop = google.shopping("Disgaea 4")
         self.assertNotEqual(len(shop), 0)
 
-
+@unittest.skip("skip")
 class ConvertCurrencyTest(unittest.TestCase):
 
     # @unittest.skip("skip")
@@ -100,7 +100,7 @@ class ConvertCurrencyTest(unittest.TestCase):
         """Test method to parse currency response. TODO!"""
         pass
 
-
+@unittest.skip("skip")
 class SearchImagesTest(unittest.TestCase):
 
     def test_get_images_req_url(self):
