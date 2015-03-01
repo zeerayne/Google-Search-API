@@ -3,9 +3,8 @@ import nose
 from google import google
 from google import currency, images
 from mock import Mock
-import os
 
-@unittest.skip("skip")
+
 class GoogleTest(unittest.TestCase):
 
     # @unittest.skip("skip")
@@ -13,7 +12,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to search images."""
 
         # replace method to get html from a test html file
-        f = open('test_search_images.html', 'r')
+        f = open('./html_files/test_search_images.html', 'r')
         google.images.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -25,7 +24,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to calculate in google."""
 
         # replace method to get html from a test html file
-        f = open('test_calculator.html', 'r')
+        f = open('./html_files/test_calculator.html', 'r')
         google.calculator.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -37,7 +36,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to get an exchange rate in google."""
 
         # replace method to get html from a test html file
-        f = open('test_exchange_rate.html', 'r')
+        f = open('./html_files/test_exchange_rate.html', 'r')
         google.currency.get_html = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -49,7 +48,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to convert currency in google."""
 
         # replace method to get html from a test html file
-        f = open('test_convert_currency.html', 'r')
+        f = open('./html_files/test_convert_currency.html', 'r')
         google.currency.get_html = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -60,7 +59,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to search in google."""
 
         # replace method to get html from a test html file
-        f = open('test_standard_search.html', 'r')
+        f = open('./html_files/test_standard_search.html', 'r')
         google.standard_search.get_html = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -71,14 +70,16 @@ class GoogleTest(unittest.TestCase):
         """Test method for google shopping."""
 
         # replace method to get html from a test html file
-        f = open('test_shopping_search.html', 'r')
+        f = open('./html_files/test_shopping_search.html', 'r')
         google.shopping_search.get_html = \
             Mock(return_value=f.read().decode('utf8'))
 
         shop = google.shopping("Disgaea 4")
         self.assertNotEqual(len(shop), 0)
 
-@unittest.skip("skip")
+# @unittest.skip("skip")
+
+
 class ConvertCurrencyTest(unittest.TestCase):
 
     # @unittest.skip("skip")
@@ -95,12 +96,14 @@ class ConvertCurrencyTest(unittest.TestCase):
 
         self.assertEqual(req_url, exp_req_url)
 
-    @unittest.skip("skip")
+    # @unittest.skip("skip")
     def test_parse_currency_response(self):
         """Test method to parse currency response. TODO!"""
         pass
 
-@unittest.skip("skip")
+# @unittest.skip("skip")
+
+
 class SearchImagesTest(unittest.TestCase):
 
     def test_get_images_req_url(self):
@@ -120,5 +123,4 @@ class SearchImagesTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # nose.main()
-    os.chdir("./html_files")
     nose.run(defaultTest=__name__)

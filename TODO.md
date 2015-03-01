@@ -10,6 +10,7 @@ Todo list for Google-Search-API
 - [ ] Be able to manage both Chrome and Firefox, and maybe Ie too, depending in what browser the user has
 - [ ] Write a full suite of docs test and unit tests
 - [ ] Reconvert all comments following the google python style guide - https://google-styleguide.googlecode.com/svn/trunk/pyguide.html
+- Decorator para load html files
 
 ## Stuff to check out later on
 
