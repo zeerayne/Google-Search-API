@@ -8,14 +8,14 @@ class GoogleResult:
     """Represents a google search result."""
 
     def __init__(self):
-        self.name  # The title of the link
-        self.link  # The external link
-        self.google_link  # The google link
-        self.description  # The description of the link
-        self.thumb  # Link to a thumbnail of the website (NOT implemented yet)
-        self.cached  # Link to cached version of the page (NOT implemented yet)
-        self.page  # Page this result was on (When searching more than one)
-        self.index  # What index on this page it was on
+        self.name = None  # The title of the link
+        self.link = None  # The external link
+        self.google_link = None  # The google link
+        self.description = None  # The description of the link
+        self.thumb = None  # Thumbnail link of website (NOT implemented yet)
+        self.cached = None  # Cached version link of page (NOT implemented yet)
+        self.page = None  # Results page this one was on
+        self.index = None  # What index on this page it was on
 
     def __repr__(self):
         name = self._limit_str_size(self.name, 55)
@@ -70,8 +70,8 @@ def search(query, pages=1):
                 res.link = _get_link(li)
                 res.google_link = _get_google_link(li)
                 res.description = _get_description(li)
-                res.thumb = _get_description()
-                res.cached = _get_description()
+                res.thumb = _get_thumb()
+                res.cached = _get_cached()
 
                 results.append(res)
                 j += 1
