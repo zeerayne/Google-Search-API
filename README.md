@@ -75,26 +75,17 @@ google.calculate("157.3kg in grams")
 ```
 
 ```python
-{'expr': u'157.3 kilograms',
- 'fullstring': u'157.3 kilograms = 157\xa0300 grams',
- 'result': u'157 300 grams',
- 'unit': u'grams',
- 'value': u'157300'}
+CalculatorResult
+    self.value = None  # Result value (eg. 157300.0)
+    self.from_value = None  # Initial value (eg. 157.3)
+    self.unit = None  # Result unit (eg. u'grams') (NOT implemented yet)
+    self.from_unit = None  # Initial unit (eg. u'kilograms') (NOT implemented yet)
+    self.expr = None  # Initial expression (eg. u'157.3 grams') (NOT implemented yet)
+    self.result = None  # Result expression  (eg. u'157300 kilograms') (NOT implemented yet)
+    self.fullstring = None  # Result unit (eg. u'157.3 kilograms = 157300 grams') (NOT implemented yet)
 ```
 
-
-```python
-from google import google
-google.calculate("cos(25 pi) / 17.4")
-```
-
-```python
-{'expr': u'cos(25 * pi) / 17.4',
- 'fullstring': u'cos(25 * pi) / 17.4 = -0.0574712644',
- 'result': u'-0.0574712644',
- 'unit': None,
- 'value': u'-0.0574712644'}
-```
+*Parsing of the units must be implemented. The rest of the data members of CalculatorResult can be build from the values and units of the calculation.*
 
 ## Google Image Search
 Searches google images for a list of images.  Image searches can be filtered to produce better results.
