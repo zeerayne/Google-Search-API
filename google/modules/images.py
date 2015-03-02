@@ -4,6 +4,7 @@ import urlparse
 import sys
 import requests
 import shutil
+import os
 
 
 IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",
@@ -69,29 +70,38 @@ class ImageOptions:
         self.color_type = None
         self.color = None
 
+    def __repr__(self):
+        return self.__dict__
+
     def get_tbs(self):
         tbs = None
         if self.image_type:
             # clipart
-            tbs = _add_to_tbs(tbs, "itp", self.image_type)
+            tbs = self._add_to_tbs(tbs, "itp", self.image_type)
         if self.size_category and not (self.larger_than or (self.exact_width and self.exact_height)):
             # i = icon, l = large, m = medium, lt = larger than, ex = exact
-            tbs = _add_to_tbs(tbs, "isz", self.size_category)
+            tbs = self._add_to_tbs(tbs, "isz", self.size_category)
         if self.larger_than:
             # qsvga,4mp
-            tbs = _add_to_tbs(tbs, "isz", SizeCategory.LARGER_THAN)
-            tbs = _add_to_tbs(tbs, "islt", self.larger_than)
+            tbs = self._add_to_tbs(tbs, "isz", SizeCategory.LARGER_THAN)
+            tbs = self._add_to_tbs(tbs, "islt", self.larger_than)
         if self.exact_width and self.exact_height:
-            tbs = _add_to_tbs(tbs, "isz", SizeCategory.EXACTLY)
-            tbs = _add_to_tbs(tbs, "iszw", self.exact_width)
-            tbs = _add_to_tbs(tbs, "iszh", self.exact_height)
+            tbs = self._add_to_tbs(tbs, "isz", SizeCategory.EXACTLY)
+            tbs = self._add_to_tbs(tbs, "iszw", self.exact_width)
+            tbs = self._add_to_tbs(tbs, "iszh", self.exact_height)
         if self.color_type and not self.color:
             # color = color, gray = black and white, specific = user defined
-            tbs = _add_to_tbs(tbs, "ic", self.color_type)
+            tbs = self._add_to_tbs(tbs, "ic", self.color_type)
         if self.color:
-            tbs = _add_to_tbs(tbs, "ic", ColorType.SPECIFIC)
-            tbs = _add_to_tbs(tbs, "isc", self.color)
+            tbs = self._add_to_tbs(tbs, "ic", ColorType.SPECIFIC)
+            tbs = self._add_to_tbs(tbs, "isc", self.color)
         return tbs
+
+    def _add_to_tbs(self, tbs, name, value):
+        if tbs:
+            return "%s,%s:%s" % (tbs, name, value)
+        else:
+            return "&tbs=%s:%s" % (name, value)
 
 
 class ImageResult:
@@ -128,7 +138,7 @@ class ImageResult:
                  "domain={}, link={})".format(self.domain, self.link)
         return string
 
-    def download(self, path="download"):
+    def download(self, path="images"):
         """Download an image to a given path."""
 
         self._create_path(path)
@@ -197,13 +207,6 @@ class ImageResult:
 
 
 # PRIVATE
-def _add_to_tbs(tbs, name, value):
-    if tbs:
-        return "%s,%s:%s" % (tbs, name, value)
-    else:
-        return "&tbs=%s:%s" % (name, value)
-
-
 def _parse_image_format(image_link):
     """Parse an image format from a download link.
 
@@ -255,6 +258,14 @@ def _find_divs_with_images(soup):
     return div_container.find_all("div", {"class": "rg_di"})
 
 
+def _get_name():
+    pass
+
+
+def _get_filesize():
+    pass
+
+
 def _get_image_data(res, a):
     """Parse image data and write it to an ImageResult object.
 
@@ -265,12 +276,14 @@ def _get_image_data(res, a):
     google_middle_link = a["href"]
     url_parsed = urlparse.urlparse(google_middle_link)
     qry_parsed = urlparse.parse_qs(url_parsed.query)
+    res.name = _get_name()
     res.link = qry_parsed["imgurl"][0]
     res.format = _parse_image_format(res.link)
     res.width = qry_parsed["w"][0]
     res.height = qry_parsed["h"][0]
     res.site = qry_parsed["imgrefurl"][0]
     res.domain = urlparse.urlparse(res.site).netloc
+    res.filesize = _get_filesize()
 
 
 def _get_thumb_data(res, img):
@@ -403,7 +416,7 @@ def search(query, image_options=None, num_images=50):
                 if curr_num_img >= num_images:
                     break
 
-    return results
+    return list(results)
 
 
 def download(image_results, path=None):

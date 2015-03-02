@@ -76,19 +76,19 @@ google.calculate("157.3kg in grams")
 
 ```python
 CalculatorResult
-    self.value = None  # Result value (eg. 157300.0)
-    self.from_value = None  # Initial value (eg. 157.3)
-    self.unit = None  # Result unit (eg. u'grams') (NOT implemented yet)
-    self.from_unit = None  # Initial unit (eg. u'kilograms') (NOT implemented yet)
-    self.expr = None  # Initial expression (eg. u'157.3 grams') (NOT implemented yet)
-    self.result = None  # Result expression  (eg. u'157300 kilograms') (NOT implemented yet)
-    self.fullstring = None  # Result unit (eg. u'157.3 kilograms = 157300 grams') (NOT implemented yet)
+    value = None  # Result value (eg. 157300.0)
+    from_value = None  # Initial value (eg. 157.3)
+    unit = None  # Result unit (eg. u'grams') (NOT implemented yet)
+    from_unit = None  # Initial unit (eg. u'kilograms') (NOT implemented yet)
+    expr = None  # Initial expression (eg. u'157.3 grams') (NOT implemented yet)
+    result = None  # Result expression  (eg. u'157300 kilograms') (NOT implemented yet)
+    fullstring = None  # Result unit (eg. u'157.3 kilograms = 157300 grams') (NOT implemented yet)
 ```
 
 *Parsing of the units must be implemented. The rest of the data members of CalculatorResult can be build from the values and units of the calculation.*
 
 ## Google Image Search
-Searches google images for a list of images.  Image searches can be filtered to produce better results.
+Searches google images for a list of images.  Image searches can be filtered to produce better results. Image searches can be downloaded.
 
 Perform a google image search on "banana" and filter it:
 
@@ -104,17 +104,22 @@ results = google.search_images("banana", options)
 Sample Result:
 
 ```python
-{'domain': u'exitrealworld.com',
- 'filesize': u'4054k',
- 'format': u'jpg',
- 'height': u'3103',
- 'index': 0,
- 'link': u'http://www.exitrealworld.com/tools_v2/resources/9e55471ba84686ade677ffe595c45992/upload_images/YELLOW_BANANA.jpg',
- 'name': u'Lib Tech Skate Banana BTX',
- 'page': 0,
- 'thumb': u'http://t3.gstatic.com/images?q=tbn:ANd9GcRzvAUW0en9eZTag3giWelcQ_xbrnBMXVChb3RU3v4HtEgxN3RMS0bSdidf',
- 'width': u'3104'}
+{'domain': 'shop.tradedoubler.com',
+ 'filesize': None,
+ 'format': None,
+ 'height': '2000',
+ 'index': 15,
+ 'link': 'http://tesco.scene7.com/is/image/tesco/210-8446_PI_1000013MN%3Fwid%3D2000%26hei%3D2000',
+ 'name': None,
+ 'page': 1,
+ 'site': 'http://shop.tradedoubler.com/shop/uk-01/a/2058674/productName/banana/sortBy/price/sortReverse/false',
+ 'thumb': 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcS8JPH_bgyvvyf5X67k32ZZYjf9MlWlxHIEXXxi91TVrNafpokI',
+ 'thumb_height': '199px',
+ 'thumb_width': '199px',
+ 'width': '2000'}
 ```
+
+*filesize is to be implemented. format works, but sometimes the link of the image doesn't show the format. Google images right now seems to not have a names, so the method for that is not implemented.*
 
 Filter options:
 
@@ -171,6 +176,14 @@ class ColorType:
     BLACK_WHITE = "gray"
     SPECIFIC = "specific"
 ```
+
+You can download a list of images.
+
+```python
+images.download(image_results, path = "path/to/download/images")
+```
+
+Path is an optional argument, if you don't specify a path, images will be downloaded to an "images" folder inside the working directory.
 
 ## Google Currency Converter (Exchange Rates)
 Convert between one currency and another using google calculator. Results are real time and can change at any time based on the current exchange rate according to google.
