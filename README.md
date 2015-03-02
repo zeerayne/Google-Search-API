@@ -36,7 +36,7 @@ Google-Search-API folder.
 ```python
 import os
 os.chdir("C:\Path_where_repo_is")
-import google
+from google import google
 ```
 
 ## Google Web Search
@@ -44,21 +44,26 @@ You can search google web in the following way:
 
 ```python
 from google import google
-search_results = google.search("This is my query")
+num_page = 3
+search_results = google.search("This is my query", num_page)
 ```
 
-`search_results` will contain a list of `GoogleResult` objects
+`search_results` will contain a list of `GoogleResult` objects. num_page parameter is optional (default is 1 page)
 
 ```python
 GoogleResult:
     self.name # The title of the link
-    self.link # The link url
+    self.link # The external link (NOT implemented yet)
+    self.google_link # The google link
     self.description # The description of the link
-    self.thumb # The link to a thumbnail of the website (not implemented yet)
-    self.cached # A link to the cached version of the page
+    self.thumb # The link to a thumbnail of the website (NOT implemented yet)
+    self.cached # A link to the cached version of the page (NOT implemented yet)
     self.page # What page this result was on (When searching more than one page)
     self.index # What index on this page it was on
 ```
+
+*Description text parsing has some encoding problems to be resolved.*
+*Only google link of the search is being parsed right now, parse the external link is an implementation priority.*
 
 
 ## Google Calculator
@@ -224,3 +229,12 @@ google.convert_currency(5.0, "USD", "EUR")
 ```
 
 As a side note, `convert_currency` is always more accurate than performing your own math on `exchange_rate` because of possible rounding errors. However if you have more than one value to convert it is best to call `exchange_rate` and cache the result to use for multiple calculations instead of querying the google server for each one.
+
+
+## Contributions
+
+All contributions are very welcome! As you have seen, there is still some methods that are not implemented. The structure of the package is intended to facilitate that you can contribute implementing or improving any method without changing other code.
+
+Other interesting things that you may do is to build a good command line interface for the package. You can also take a look to the [TODO list](https://github.com/abenassi/Google-Search-API/blob/master/TODO.md)
+
+For all contributions, we intend to follow the [Google Ptyhon Style Guide](https://google-styleguide.googlecode.com/svn/trunk/pyguide.html)
