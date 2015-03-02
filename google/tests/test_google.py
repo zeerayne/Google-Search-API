@@ -17,15 +17,26 @@ def load_html_file(file_name):
     return f
 
 
+def dec_load_html_file(func):
+
+    dir_path = os.path.join(os.path.dirname(__file__), "html_files")
+    file_name = func.__name__ + ".html"
+    file_path = os.path.join(dir_path, file_name)
+
+    f = open(file_path, "r")
+
+    func(f)
+
+
 class GoogleTest(unittest.TestCase):
 
     # @unittest.skip("skip")
-    # @load_html_file
-    def test_search_images(self):
+    @dec_load_html_file
+    def test_search_images(self, f):
         """Test method to search images."""
 
         # replace method to get html from a test html file
-        f = load_html_file("test_search_images.html")
+        # f = load_html_file("test_search_images.html")
         google.images.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
 

@@ -4,13 +4,13 @@ Todo list for Google-Search-API
 ## Next tasks
 
 - [x] Mock html test for all search methods - https://pypi.python.org/pypi/mock/
-- [x] Test and implement the use of images options in search images method (is broken right now, in the middle of a re-factor)
+- [x] Test and implement the use of images options in search images method
 - [x] Re-factor and split main module in separated ones
-- [ ] Write tests for future methods development (they should failed and be skipped up to the proper method development moment)
+- [ ] Implement google search external link scraping
 - [ ] Be able to manage both Chrome and Firefox, and maybe Ie too, depending in what browser the user has
-- [ ] Write a full suite of docs test and unit tests
+- [ ] Implement PhantomJS for not showing the explorer opening
+- [ ] Write a full suite of docs tests and unit tests
 - [ ] Reconvert all comments following the google python style guide - https://google-styleguide.googlecode.com/svn/trunk/pyguide.html
-- Decorator para load html files
 
 ## Stuff to check out later on
 
