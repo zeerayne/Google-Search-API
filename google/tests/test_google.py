@@ -3,16 +3,29 @@ import nose
 from google import google
 from google import currency, images
 from mock import Mock
+import os
+
+
+def load_html_file(file_name):
+
+    dir_path = os.path.join(os.path.dirname(__file__), "html_files")
+    # file_name = func.__name__ + ".html"
+    file_path = os.path.join(dir_path, file_name)
+
+    f = open(file_path, "r")
+
+    return f
 
 
 class GoogleTest(unittest.TestCase):
 
     # @unittest.skip("skip")
+    # @load_html_file
     def test_search_images(self):
         """Test method to search images."""
 
         # replace method to get html from a test html file
-        f = open('./html_files/test_search_images.html', 'r')
+        f = load_html_file("test_search_images.html")
         google.images.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -24,7 +37,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to calculate in google."""
 
         # replace method to get html from a test html file
-        f = open('./html_files/test_calculator.html', 'r')
+        f = load_html_file("test_calculator.html")
         google.calculator.get_html_from_dynamic_site = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -36,7 +49,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to get an exchange rate in google."""
 
         # replace method to get html from a test html file
-        f = open('./html_files/test_exchange_rate.html', 'r')
+        f = load_html_file('test_exchange_rate.html')
         google.currency.get_html = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -48,7 +61,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to convert currency in google."""
 
         # replace method to get html from a test html file
-        f = open('./html_files/test_convert_currency.html', 'r')
+        f = load_html_file('test_convert_currency.html')
         google.currency.get_html = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -59,7 +72,7 @@ class GoogleTest(unittest.TestCase):
         """Test method to search in google."""
 
         # replace method to get html from a test html file
-        f = open('./html_files/test_standard_search.html', 'r')
+        f = load_html_file('test_standard_search.html',)
         google.standard_search.get_html = \
             Mock(return_value=f.read().decode('utf8'))
 
@@ -70,7 +83,7 @@ class GoogleTest(unittest.TestCase):
         """Test method for google shopping."""
 
         # replace method to get html from a test html file
-        f = open('./html_files/test_shopping_search.html', 'r')
+        f = load_html_file('test_shopping_search.html')
         google.shopping_search.get_html = \
             Mock(return_value=f.read().decode('utf8'))
 
