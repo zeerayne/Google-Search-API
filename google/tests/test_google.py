@@ -6,107 +6,97 @@ from mock import Mock
 import os
 
 
-def load_html_file(file_name):
+def load_html_file(path):
+    """Call test with a html file of the same name.
 
-    dir_path = os.path.join(os.path.dirname(__file__), "html_files")
-    # file_name = func.__name__ + ".html"
-    file_path = os.path.join(dir_path, file_name)
+    Args:
+        path: Relative path where the html file is located."""
 
-    f = open(file_path, "r")
+    def test_decorator(fn):
+        base_path = os.path.join(os.path.dirname(__file__), path)
+        file_name = fn.__name__ + ".html"
+        file_path = os.path.join(base_path, file_name)
 
-    return f
+        html_f = open(file_path, "r")
 
+        def test_decorated(self):
+            fn(self, html_f)
 
-def dec_load_html_file(func):
-
-    dir_path = os.path.join(os.path.dirname(__file__), "html_files")
-    file_name = func.__name__ + ".html"
-    file_path = os.path.join(dir_path, file_name)
-
-    f = open(file_path, "r")
-
-    func(f)
+        return test_decorated
+    return test_decorator
 
 
 class GoogleTest(unittest.TestCase):
 
-    # @unittest.skip("skip")
-    @dec_load_html_file
-    def test_search_images(self, f):
+    @load_html_file("html_files")
+    def test_search_images(self, html_f):
         """Test method to search images."""
 
         # replace method to get html from a test html file
-        # f = load_html_file("test_search_images.html")
         google.images.get_html_from_dynamic_site = \
-            Mock(return_value=f.read().decode('utf8'))
+            Mock(return_value=html_f.read().decode('utf8'))
 
         res = google.search_images("apple", num_images=10)
         self.assertEqual(len(res), 10)
 
-    # @unittest.skip("skip")
-    def test_calculate(self):
+    @load_html_file("html_files")
+    def test_calculator(self, html_f):
         """Test method to calculate in google."""
 
         # replace method to get html from a test html file
-        f = load_html_file("test_calculator.html")
         google.calculator.get_html_from_dynamic_site = \
-            Mock(return_value=f.read().decode('utf8'))
+            Mock(return_value=html_f.read().decode('utf8'))
 
         calc = google.calculate("157.3kg in grams")
         self.assertEqual(calc.value, 157300)
 
-    # @unittest.skip("skip")
-    def test_exchange_rate(self):
+    @load_html_file("html_files")
+    def test_exchange_rate(self, html_f):
         """Test method to get an exchange rate in google."""
 
         # replace method to get html from a test html file
-        f = load_html_file('test_exchange_rate.html')
         google.currency.get_html = \
-            Mock(return_value=f.read().decode('utf8'))
+            Mock(return_value=html_f.read().decode('utf8'))
 
         usd_to_eur = google.exchange_rate("USD", "EUR")
         self.assertGreater(usd_to_eur, 0.0)
 
-    # @unittest.skip("skip")
-    def test_convert_currency(self):
+    @load_html_file("html_files")
+    def test_convert_currency(self, html_f):
         """Test method to convert currency in google."""
 
         # replace method to get html from a test html file
-        f = load_html_file('test_convert_currency.html')
         google.currency.get_html = \
-            Mock(return_value=f.read().decode('utf8'))
+            Mock(return_value=html_f.read().decode('utf8'))
 
         euros = google.convert_currency(5.0, "USD", "EUR")
         self.assertGreater(euros, 0.0)
 
-    def test_search(self):
+    @load_html_file("html_files")
+    def test_standard_search(self, html_f):
         """Test method to search in google."""
 
         # replace method to get html from a test html file
-        f = load_html_file('test_standard_search.html',)
         google.standard_search.get_html = \
-            Mock(return_value=f.read().decode('utf8'))
+            Mock(return_value=html_f.read().decode('utf8'))
 
         search = google.search("github")
         self.assertNotEqual(len(search), 0)
 
-    def test_shopping(self):
+    @load_html_file("html_files")
+    def test_shopping_search(self, html_f):
         """Test method for google shopping."""
 
         # replace method to get html from a test html file
-        f = load_html_file('test_shopping_search.html')
         google.shopping_search.get_html = \
-            Mock(return_value=f.read().decode('utf8'))
+            Mock(return_value=html_f.read().decode('utf8'))
 
         shop = google.shopping("Disgaea 4")
         self.assertNotEqual(len(shop), 0)
 
-# @unittest.skip("skip")
-
 
 class ConvertCurrencyTest(unittest.TestCase):
 
-    # @unittest.skip("skip")
     def test_get_currency_req_url(self):
         """Test method to get currency conversion request url."""
 
