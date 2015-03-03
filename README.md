@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/abenassi/Google-Search-API/badge.svg?branch=master)](https://coveralls.io/r/abenassi/Google-Search-API?branch=master)
+
 Google Search API
 =====
 
