@@ -29,12 +29,25 @@ def load_html_file(path):
 class GoogleTest(unittest.TestCase):
 
     @load_html_file("html_files")
+    # @unittest.skip("skip")
     def test_search_images(self, html_f):
         """Test method to search images."""
 
-        # replace method to get html from a test html file
-        google.images.get_html_from_dynamic_site = \
-            Mock(return_value=html_f.read().decode('utf8'))
+        class MockBrowser(object):
+
+            """Mock browser to replace selenium driver."""
+
+            def __init__(self, html_f):
+                self.page_source = html_f.read().decode('utf8')
+
+            def get(self, url):
+                pass
+
+            def quit(self):
+                pass
+
+        google.images.get_browser_with_url = \
+            Mock(return_value=MockBrowser(html_f))
 
         res = google.search_images("apple", num_images=10)
         self.assertEqual(len(res), 10)
@@ -133,6 +146,12 @@ class SearchImagesTest(unittest.TestCase):
         exp_req_url = 'https://www.google.com.ar/search?q=banana&es_sm=122&source=lnms&tbm=isch&sa=X&ei=DDdUVL-fE4SpNq-ngPgK&ved=0CAgQ_AUoAQ&biw=1024&bih=719&dpr=1.25&tbs=itp:clipart,isz:lt,islt:4mp,ic:specific,isc:green'
 
         self.assertEqual(req_url, exp_req_url)
+
+    def test_download(self):
+        pass
+
+    def test_fast_download(self):
+        pass
 
 
 if __name__ == '__main__':

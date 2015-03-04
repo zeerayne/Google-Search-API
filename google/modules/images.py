@@ -1,10 +1,12 @@
-from utils import get_html_from_dynamic_site, write_html_to_file
+from utils import get_browser_with_url, write_html_to_file, measure_time
 from bs4 import BeautifulSoup
 import urlparse
 import sys
 import requests
 import shutil
 import os
+import threading
+import Queue
 
 
 IMAGE_FORMATS = ["bmp", "gif", "jpg", "png", "psd", "pspimage", "thm",
@@ -375,11 +377,14 @@ def search(query, image_options=None, num_images=50):
     results = set()
     curr_num_img = 1
     page = 0
+    browser = get_browser_with_url("http://www.google.com")
     while curr_num_img <= num_images:
 
         page += 1
         url = _get_images_req_url(query, image_options, page)
-        html = get_html_from_dynamic_site(url)
+        # html = get_html_from_dynamic_site(url)
+        browser.get(url)
+        html = browser.page_source
 
         if html:
             soup = BeautifulSoup(html)
@@ -416,9 +421,20 @@ def search(query, image_options=None, num_images=50):
                 if curr_num_img >= num_images:
                     break
 
+    browser.quit()
+
     return list(results)
 
 
+def _download_image(image_result, path):
+
+    if path:
+        image_result.download(path)
+    else:
+        image_result.download()
+
+
+@measure_time
 def download(image_results, path=None):
     """Download a list of images.
 
@@ -430,11 +446,60 @@ def download(image_results, path=None):
     total_images = len(image_results)
     i = 1
     for image_result in image_results:
+
         progress = "".join(["Downloading image ", str(i),
                             " (", str(total_images), ")"])
         print progress
-        if path:
-            image_result.download(path)
-        else:
-            image_result.download()
+
+        _download_image(image_result, path)
+
         i += 1
+
+
+class ThreadUrl(threading.Thread):
+
+    """Threaded Url Grab"""
+
+    def __init__(self, queue, path, total):
+        threading.Thread.__init__(self)
+        self.queue = queue
+        self.path = "images"
+        self.total = total
+
+    def run(self):
+        while True:
+            # grabs host from queue
+            image_result = self.queue.get()
+
+            counter = self.total - self.queue.qsize()
+            progress = "".join(["Downloading image ", str(counter),
+                                " (", str(self.total), ")"])
+            print progress
+            sys.stdout.flush()
+            _download_image(image_result, self.path)
+
+            # signals to queue job is done
+            self.queue.task_done()
+
+
+@measure_time
+def fast_download(image_results, path=None, threads=12):
+
+    # print "starting!"
+    queue = Queue.Queue()
+    total = len(image_results)
+
+    # print "Putting images in queue..."
+    for image_result in image_results:
+        queue.put(image_result)
+
+    # spawn a pool of threads, and pass them queue instance
+    for i in range(threads):
+        # print "start thread number", i
+        sys.stdout.flush()
+        t = ThreadUrl(queue, path, total)
+        t.setDaemon(True)
+        t.start()
+
+    # wait on the queue until everything has been processed
+    queue.join()
