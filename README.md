@@ -189,6 +189,14 @@ images.download(image_results, path = "path/to/download/images")
 
 Path is an optional argument, if you don't specify a path, images will be downloaded to an "images" folder inside the working directory.
 
+If you want to download a large list of images, the previous method could be slow. A better method using multithreading is provided for this case.
+
+```python
+images.fast_download(image_results, path = "path/to/download/images", threads=12)
+```
+
+You may change the number of threads, 12 is the number that has offered the best speed after a number of informal tests that I've done.
+
 ## Google Currency Converter (Exchange Rates)
 Convert between one currency and another using google calculator. Results are real time and can change at any time based on the current exchange rate according to google.
 
