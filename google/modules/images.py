@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import urlparse
 import sys
 import requests
+import urllib2
 import shutil
 import os
 import threading
@@ -115,6 +116,7 @@ class ImageResult:
 
     def __init__(self):
         self.name = None
+        self.file_name = None
         self.link = None
         self.thumb = None
         self.thumb_width = None
@@ -144,13 +146,25 @@ class ImageResult:
         """Download an image to a given path."""
 
         self._create_path(path)
+        # print path
 
         try:
             response = requests.get(self.link, stream=True)
+            # request a protected image (adding a referer to the request)
+            # referer = self.domain
+            # image = self.link
 
-            path_filename = self._get_path_filename(path)
-            with open(path_filename, 'wb') as output_file:
-                shutil.copyfileobj(response.raw, output_file)
+            # req = urllib2.Request(image)
+            # req.add_header('Referer', referer)   # here is the trick
+            # response = urllib2.urlopen(req)
+
+            if "image" in response.headers['content-type']:
+                path_filename = self._get_path_filename(path)
+                with open(path_filename, 'wb') as output_file:
+                    shutil.copyfileobj(response.raw, output_file)
+                    # output_file.write(response.content)
+            else:
+                print "\r\rskiped! cached image"
 
             del response
 
@@ -176,8 +190,8 @@ class ImageResult:
         path_filename = None
 
         # preserve the original name
-        if self.name and self.format:
-            original_filename = self.name + "." + self.format
+        if self.file_name:
+            original_filename = self.file_name
             path_filename = os.path.join(path, original_filename)
 
         # create a default name if there is no original name
@@ -220,11 +234,11 @@ def _parse_image_format(image_link):
 
     >>> link = "http://minionslovebananas.com/images/gallery/preview/Chiquita-DM2-minion-banana-3.jpg%3Fw%3D300%26h%3D429"
     >>> Google._parse_image_format(link)
-    'jpg'
 
     """
     parsed_format = image_link[image_link.rfind(".") + 1:]
 
+    # OLD: identify formats even with weird final characters
     if parsed_format not in IMAGE_FORMATS:
         for image_format in IMAGE_FORMATS:
             if image_format in parsed_format:
@@ -256,8 +270,27 @@ def _get_images_req_url(query, image_options=None, page=0,
 
 
 def _find_divs_with_images(soup):
-    div_container = soup.find("div", {"id": "rg_s"})
-    return div_container.find_all("div", {"class": "rg_di"})
+
+    try:
+        div_container = soup.find("div", {"id": "rg_s"})
+        divs = div_container.find_all("div", {"class": "rg_di"})
+    except:
+        divs = None
+    return divs
+
+
+def _get_file_name(link):
+
+    temp_name = link.rsplit('/', 1)[1]
+    image_format = _parse_image_format(link)
+
+    if image_format and temp_name.rsplit(".", 1)[1] != image_format:
+        file_name = temp_name.rsplit(".", 1)[0] + "." + image_format
+
+    else:
+        file_name = temp_name
+
+    return file_name
 
 
 def _get_name():
@@ -280,6 +313,7 @@ def _get_image_data(res, a):
     qry_parsed = urlparse.parse_qs(url_parsed.query)
     res.name = _get_name()
     res.link = qry_parsed["imgurl"][0]
+    res.file_name = _get_file_name(res.link)
     res.format = _parse_image_format(res.link)
     res.width = qry_parsed["w"][0]
     res.height = qry_parsed["h"][0]
@@ -377,7 +411,7 @@ def search(query, image_options=None, num_images=50):
     results = set()
     curr_num_img = 1
     page = 0
-    browser = get_browser_with_url("http://www.google.com")
+    browser = get_browser_with_url("")
     while curr_num_img <= num_images:
 
         page += 1
@@ -391,35 +425,37 @@ def search(query, image_options=None, num_images=50):
 
             # iterate over the divs containing images in one page
             divs = _find_divs_with_images(soup)
-            for div in divs:
 
-                res = ImageResult()
+            if divs:
+                for div in divs:
 
-                # store indexing paramethers
-                res.page = page
-                res.index = curr_num_img
+                    res = ImageResult()
 
-                # get url of image and its secondary data
-                a = div.find("a")
-                if a:
-                    _get_image_data(res, a)
+                    # store indexing paramethers
+                    res.page = page
+                    res.index = curr_num_img
 
-                # get url of thumb and its size paramethers
-                img = a.find_all("img")
-                if img:
-                    _get_thumb_data(res, img)
+                    # get url of image and its secondary data
+                    a = div.find("a")
+                    if a:
+                        _get_image_data(res, a)
 
-                # increment image counter only if a new image was added
-                prev_num_results = len(results)
-                results.add(res)
-                curr_num_results = len(results)
+                    # get url of thumb and its size paramethers
+                    img = a.find_all("img")
+                    if img:
+                        _get_thumb_data(res, img)
 
-                if curr_num_results > prev_num_results:
-                    curr_num_img += 1
+                    # increment image counter only if a new image was added
+                    prev_num_results = len(results)
+                    results.add(res)
+                    curr_num_results = len(results)
 
-                # break the loop when limit of images is reached
-                if curr_num_img >= num_images:
-                    break
+                    if curr_num_results > prev_num_results:
+                        curr_num_img += 1
+
+                    # break the loop when limit of images is reached
+                    if curr_num_img >= num_images:
+                        break
 
     browser.quit()
 
@@ -428,10 +464,11 @@ def search(query, image_options=None, num_images=50):
 
 def _download_image(image_result, path):
 
-    if path:
-        image_result.download(path)
-    else:
-        image_result.download()
+    if image_result.format:
+        if path:
+            image_result.download(path)
+        else:
+            image_result.download()
 
 
 @measure_time
@@ -463,7 +500,7 @@ class ThreadUrl(threading.Thread):
     def __init__(self, queue, path, total):
         threading.Thread.__init__(self)
         self.queue = queue
-        self.path = "images"
+        self.path = path
         self.total = total
 
     def run(self):
@@ -483,20 +520,16 @@ class ThreadUrl(threading.Thread):
 
 
 @measure_time
-def fast_download(image_results, path=None, threads=12):
-
-    # print "starting!"
+def fast_download(image_results, path=None, threads=10):
+    # print path
     queue = Queue.Queue()
     total = len(image_results)
 
-    # print "Putting images in queue..."
     for image_result in image_results:
         queue.put(image_result)
 
     # spawn a pool of threads, and pass them queue instance
     for i in range(threads):
-        # print "start thread number", i
-        sys.stdout.flush()
         t = ThreadUrl(queue, path, total)
         t.setDaemon(True)
         t.start()

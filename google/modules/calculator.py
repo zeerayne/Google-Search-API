@@ -25,7 +25,8 @@ def calculate(expr):
     Returns a `CalculatorResult` if successful or `None` if it fails.
 
     Args:
-        expr: Calculation expression (eg. "cos(25 pi) / 17.4")
+        expr: Calculation expression (eg. "cos(25 pi) / 17.4" or
+            "157.3kg in grams")
 
     Returns:
         CalculatorResult object."""
