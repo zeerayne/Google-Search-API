@@ -487,6 +487,7 @@ def download(image_results, path=None):
         progress = "".join(["Downloading image ", str(i),
                             " (", str(total_images), ")"])
         print progress
+        sys.stdout.flush()
 
         _download_image(image_result, path)
 

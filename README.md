@@ -1,3 +1,4 @@
+
 Google Search API
 =====
 
@@ -11,12 +12,30 @@ Google Search API is a python based library for searching various functionalitie
 
 *Disclaimer: This software uses screen scraping to retrieve search results from google.com, and therefore this software may stop working at any given time.  Use this software at your own risk. I assume no responsibility for how this software API is used by others.*
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Google Search API
+](#google-search-api)
+  - [Development current status
+](#development-current-status)
+  - [Installation
+](#installation)
+  - [Google Web Search](#google-web-search)
+  - [Google Calculator](#google-calculator)
+  - [Google Image Search](#google-image-search)
+  - [Google Currency Converter (Exchange Rates)](#google-currency-converter-exchange-rates)
+  - [Contributions](#contributions)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Development current status
 --------------------------
 
 All methods are currently functioning and returning its primary target data. Although, some of the secondary data that is supposed to be collected in the result objects is not yet working.
 
-Redesign of the package is still a work in progress. After completed, I will attempt to repair the gathering of secondary data.
+Redesign of the package is still a work in progress. After completed, I will attempt to repair the gathering of secondary data. Contributions are welcome!
 
 Installation
 ------------

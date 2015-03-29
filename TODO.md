@@ -6,6 +6,7 @@ Todo list for Google-Search-API
 - [x] Mock html test for all search methods - https://pypi.python.org/pypi/mock/
 - [x] Test and implement the use of images options in search images method
 - [x] Re-factor and split main module in separated ones
+- [ ] Implement fast download using concurrent futures - https://gist.github.com/mangecoeur/9540178 - https://docs.python.org/3/library/concurrent.futures.html
 - [ ] Implement google search external link scraping
 - [ ] Be able to manage both Chrome and Firefox, and maybe Ie too, depending in what browser the user has
 - [ ] Implement PhantomJS for not showing the explorer opening
