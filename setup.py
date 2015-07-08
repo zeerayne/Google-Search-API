@@ -1,4 +1,14 @@
-from setuptools import setup
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+with open("requirements.txt") as f:
+    requirements = [req.strip() for req in f.readlines()]
 
 test_requirements = [
     "nose",
@@ -6,7 +16,7 @@ test_requirements = [
 ]
 
 setup(name='Google-Search-API',
-      version='1.1.2',
+      version='1.1.3',
       url='https://github.com/abenassi/Google-Search-API',
       description='Search in google',
       author='Anthony Casagrande, Agustin Benassi',
@@ -21,6 +31,7 @@ setup(name='Google-Search-API',
       ],
       package_dir={'google': 'google'},
       include_package_data=True,
+      install_requires=requirements,
       keywords="google search images api",
       classifiers=[
           'Development Status :: 3 - Alpha',
