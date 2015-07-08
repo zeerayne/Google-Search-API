@@ -1,9 +1,11 @@
+from __future__ import unicode_literals
+from unidecode import unidecode
+
 from utils import get_browser_with_url, write_html_to_file, measure_time
 from bs4 import BeautifulSoup
 import urlparse
 import sys
 import requests
-import urllib2
 import shutil
 import os
 import threading
@@ -74,7 +76,7 @@ class ImageOptions:
         self.color = None
 
     def __repr__(self):
-        return self.__dict__
+        return unidecode(self.__dict__)
 
     def get_tbs(self):
         tbs = None
@@ -138,8 +140,8 @@ class ImageResult:
 
     def __repr__(self):
         string = "ImageResult(" + \
-                 "index={}, page={}, ".format(self.index, self.page) + \
-                 "domain={}, link={})".format(self.domain, self.link)
+                 "index={}, page={}, ".format(unidecode(self.index), unidecode(self.page)) + \
+                 "domain={}, link={})".format(unidecode(self.domain), unidecode(self.link))
         return string
 
     def download(self, path="images"):

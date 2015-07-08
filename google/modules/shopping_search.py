@@ -1,6 +1,9 @@
+from __future__ import unicode_literals
+
 from utils import get_html, normalize_query
 from bs4 import BeautifulSoup
 import re
+from unidecode import unidecode
 
 
 class ShoppingResult:
@@ -18,7 +21,7 @@ class ShoppingResult:
         self.min_price = None
 
     def __repr__(self):
-        return self.name
+        return unidecode(self.name)
 
 
 def shopping(query, pages=1):

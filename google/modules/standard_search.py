@@ -1,6 +1,9 @@
+from __future__ import unicode_literals
+
 from utils import _get_search_url, get_html
 from bs4 import BeautifulSoup
 import urlparse
+from unidecode import unidecode
 
 
 class GoogleResult:
@@ -34,10 +37,10 @@ class GoogleResult:
             return None
 
         elif len(str_element) > size_limit:
-            return str_element.decode("utf-8")[:size_limit] + ".."
+            return unidecode(str_element[:size_limit]) + ".."
 
         else:
-            return str_element.decode("utf-8")
+            return unidecode(str_element)
 
 
 # PUBLIC
