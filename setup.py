@@ -16,7 +16,7 @@ test_requirements = [
 ]
 
 setup(name='Google-Search-API',
-      version='1.1.3',
+      version='1.1.4',
       url='https://github.com/abenassi/Google-Search-API',
       description='Search in google',
       author='Anthony Casagrande, Agustin Benassi',
