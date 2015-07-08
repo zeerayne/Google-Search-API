@@ -17,7 +17,7 @@ setup(name='Google-Search-API',
       packages=[
           'google',
           'google.modules',
-          'google.test'
+          'google.tests'
       ],
       package_dir={'google': 'google'},
       include_package_data=True,
