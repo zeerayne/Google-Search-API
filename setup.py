@@ -14,7 +14,6 @@ test_requirements = [
     "nose",
     "nose-cov"
 ]
-
 setup(name='Google-Search-API',
       version='1.1.4',
       url='https://github.com/abenassi/Google-Search-API',
