@@ -1,16 +1,35 @@
 from setuptools import setup
 
+test_requirements = [
+    "nose",
+    "nose-cov"
+]
+
 setup(name='Google-Search-API',
-      version='1.1.1',
+      version='1.1.2',
       url='https://github.com/abenassi/Google-Search-API',
       description='Search in google',
       author='Anthony Casagrande, Agustin Benassi',
       author_email='birdapi@gmail.com, agusbenassi@gmail.com',
+      maintainer="Agustin Benassi",
+      maintainer_email='agusbenassi@gmail.com',
       license='MIT',
-
-      packages=['google'],
-
+      packages=[
+          'google',
+          'google.modules',
+          'google.test'
+      ],
+      package_dir={'google': 'google'},
+      include_package_data=True,
+      keywords="google search images api",
+      classifiers=[
+          'Development Status :: 3 - Alpha',
+          'Intended Audience :: Developers',
+          'Natural Language :: English',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 2.7'
+      ],
       setup_requires=['nose>=1.0'],
       test_suite='nose.collector',
-      tests_require=['nose', 'nose-cov']
+      tests_require=test_requirements
       )
