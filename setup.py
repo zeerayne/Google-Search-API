@@ -15,7 +15,7 @@ test_requirements = [
     "nose-cov"
 ]
 setup(name='Google-Search-API',
-      version='1.1.5',
+      version='1.1.6',
       url='https://github.com/abenassi/Google-Search-API',
       description='Search in google',
       author='Anthony Casagrande, Agustin Benassi',

@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from unidecode import unidecode
 
 from utils import get_html_from_dynamic_site
 from utils import _get_search_url
@@ -17,6 +18,9 @@ class CalculatorResult:
         self.expr = None  # Initial expression (eg. u'157.3 grams') (NOT implemented yet)
         self.result = None  # Result expression  (eg. u'157300 kilograms') (NOT implemented yet)
         self.fullstring = None  # Complete expression (eg. u'157.3 kilograms = 157300 grams') (NOT implemented yet)
+
+    def __repr__(self):
+        return unidecode(self.value)
 
 
 # PUBLIC
