@@ -38,8 +38,15 @@ def get_html(url):
             "User-Agent", "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101")
         html = urllib2.urlopen(request).read()
         return html
-    except:
+    except urllib2.HTTPError as e:
         print "Error accessing:", url
+        if e.code == 503 and 'CaptchaRedirect' in e.read():
+            print "Google is requiring a Captcha. " \
+                  "For more information see: 'https://support.google.com/websearch/answer/86640'"
+        return None
+    except Exception as e:
+        print "Error accessing:", url
+        print e
         return None
 
 
