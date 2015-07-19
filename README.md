@@ -80,7 +80,7 @@ GoogleResult:
     self.google_link # The google link
     self.description # The description of the link
     self.thumb # The link to a thumbnail of the website (NOT implemented yet)
-    self.cached # A link to the cached version of the page (NOT implemented yet)
+    self.cached # A link to the cached version of the page
     self.page # What page this result was on (When searching more than one page)
     self.index # What index on this page it was on
 ```
@@ -148,13 +148,13 @@ Filter options:
 
 ```python
 ImageOptions:
-    image_type # face, body, clipart, line drawing
-    size_category # large, small, icon
-    larger_than # the well known name of the smallest image size you want
-    exact_width # the exact width of the image you want
-    exact_height # the exact height of the image you want
-    color_type # color, b&w, specific
-    color # blue, green, red
+    image_type  # face, body, clipart, line drawing
+    size_category  # large, small, icon
+    larger_than  # the well known name of the smallest image size you want
+    exact_width  # the exact width of the image you want
+    exact_height  # the exact height of the image you want
+    color_type  # color, b&w, specific
+    color  # blue, green, red
 ```
 
 Enums of values that can be used to filter image searches:
@@ -219,7 +219,7 @@ You may change the number of threads, 12 is the number that has offered the best
 ## Google Currency Converter (Exchange Rates)
 Convert between one currency and another using google calculator. Results are real time and can change at any time based on the current exchange rate according to google.
 
-Convert 5 US Dollars to Euros using the official 3 letter currency acronym:
+Convert 5 US Dollars to Euros using the official 3 letter currency acronym ([ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)):
 
 ```python
 from google import google
