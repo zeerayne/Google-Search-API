@@ -16,7 +16,7 @@ class GoogleResult:
         self.google_link = None  # The google link
         self.description = None  # The description of the link
         self.thumb = None  # Thumbnail link of website (NOT implemented yet)
-        self.cached = None  # Cached version link of page (NOT implemented yet)
+        self.cached = None  # Cached version link of page
         self.page = None  # Results page this one was on
         self.index = None  # What index on this page it was on
 
@@ -74,7 +74,7 @@ def search(query, pages=1):
                 res.google_link = _get_google_link(li)
                 res.description = _get_description(li)
                 res.thumb = _get_thumb()
-                res.cached = _get_cached()
+                res.cached = _get_cached(li)
 
                 results.append(res)
                 j += 1
@@ -118,7 +118,7 @@ def _get_google_link(li):
 def _get_description(li):
     """Return the description of a google search.
 
-    TODO: There are some text encoding problems to resovle."""
+    TODO: There are some text encoding problems to resolve."""
 
     sdiv = li.find("div", attrs={"class": "s"})
     if sdiv:
@@ -135,6 +135,11 @@ def _get_thumb():
     pass
 
 
-def _get_cached():
+def _get_cached(li):
     """Return a link to the cached version of the page."""
-    pass
+    links = li.find_all("a")
+    if len(links) > 1 and links[1].text == "Cached":
+        link = links[1]["href"]
+        if link.startswith("/url?") or link.startswith("/search?"):
+            return urlparse.urljoin("http://www.google.com", link)
+    return None
