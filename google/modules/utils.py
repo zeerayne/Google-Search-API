@@ -4,6 +4,9 @@ import time
 from selenium import webdriver
 import urllib2
 from functools import wraps
+#import requests
+from urllib import urlencode
+
 
 
 def measure_time(fn):
@@ -25,17 +28,21 @@ def normalize_query(query):
     return query.strip().replace(":", "%3A").replace("+", "%2B").replace("&", "%26").replace(" ", "+")
 
 
-def _get_search_url(query, page=0, per_page=10):
+def _get_search_url(query, page=0, per_page=10, lang='en'):
     # note: num per page might not be supported by google anymore (because of
     # google instant)
-    return "http://www.google.com/search?hl=en&q=%s&start=%i&num=%i" % (normalize_query(query), page * per_page, per_page)
 
+    params = {'nl': lang, 'q': normalize_query(query).encode('utf8'), 'start':page * per_page, 'num':per_page}
+    params = urlencode(params)
+    url = u"http://www.google.com/search?" + params
+    #return u"http://www.google.com/search?hl=%s&q=%s&start=%i&num=%i" % (lang, normalize_query(query), page * per_page, per_page)
+    return url
 
 def get_html(url):
+    header = "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101"
     try:
         request = urllib2.Request(url)
-        request.add_header(
-            "User-Agent", "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101")
+        request.add_header("User-Agent", header)
         html = urllib2.urlopen(request).read()
         return html
     except urllib2.HTTPError as e:

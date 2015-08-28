@@ -32,7 +32,6 @@ class GoogleResult:
 
     def _limit_str_size(self, str_element, size_limit):
         """Limit the characters of the string, adding .. at the end."""
-
         if not str_element:
             return None
 
@@ -44,7 +43,7 @@ class GoogleResult:
 
 
 # PUBLIC
-def search(query, pages=1):
+def search(query, pages=1, lang='en'):
     """Returns a list of GoogleResult.
 
     Args:
@@ -56,16 +55,17 @@ def search(query, pages=1):
 
     results = []
     for i in range(pages):
-        url = _get_search_url(query, i)
+        url = _get_search_url(query, i, lang=lang)
         html = get_html(url)
 
         if html:
             soup = BeautifulSoup(html, "html.parser")
             lis = soup.findAll("li", attrs={"class": "g"})
-
+            
             j = 0
             for li in lis:
                 res = GoogleResult()
+
                 res.page = i
                 res.index = j
 
@@ -86,6 +86,7 @@ def search(query, pages=1):
 def _get_name(li):
     """Return the name of a google search."""
     a = li.find("a")
+    #return a.text.encode("utf-8").strip()
     return a.text.strip()
 
 
@@ -123,9 +124,8 @@ def _get_description(li):
     sdiv = li.find("div", attrs={"class": "s"})
     if sdiv:
         stspan = sdiv.find("span", attrs={"class": "st"})
-
-        return stspan.text.encode("utf-8").strip()
-
+        #return stspan.text.encode("utf-8").strip()
+        return stspan.text.strip()
     else:
         return None
 
