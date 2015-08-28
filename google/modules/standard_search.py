@@ -87,7 +87,9 @@ def _get_name(li):
     """Return the name of a google search."""
     a = li.find("a")
     #return a.text.encode("utf-8").strip()
-    return a.text.strip()
+    if a is not None:
+        return a.text.strip()
+    return None
 
 
 def _get_link(li):
@@ -124,8 +126,9 @@ def _get_description(li):
     sdiv = li.find("div", attrs={"class": "s"})
     if sdiv:
         stspan = sdiv.find("span", attrs={"class": "st"})
+        if stspan is not None:
         #return stspan.text.encode("utf-8").strip()
-        return stspan.text.strip()
+            return stspan.text.strip()
     else:
         return None
 
