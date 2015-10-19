@@ -11,7 +11,7 @@ deploy:
   provider: pypi
   user: beni
   password:
-    secure: HPJvi6YtjXerH/e7GaVqzbwlu6X/3f/3HjJn7AvDiNP+y4okibqEsmDfPUDklPNTq+YW7q5y3ZEJFDnB9TnqXEzkOrCwYSTdqfAZbW3ncH9aJiV20tkL8sTgJIXPK3T/XNjZYz+SxuGD4cCE2/vVHY1x9AZNalGUyPl7RC+jiPc=
+    secure: XfUbc5Tnjq8mUHnv/rrQvcQ5m+k7mvk2sAwhS1Hzi2NFXaiPQF0YR2er0BDDQOFYba+MBd57l4zHdyti8Y39uVI2ZfY10c5KYio3VzXDU2doycLf7hY8cqKs8UioabVehrPU96GErVEUyA2Jj1cqrsIUX7Smj8qby0DfX+igJtM=
   on:
     tags: true
     repo: abenassi/Google-Search-API
