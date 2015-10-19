@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 from utils import _get_search_url, get_html
 from bs4 import BeautifulSoup
 import urlparse
+from urllib2 import unquote
 from unidecode import unidecode
+from re import match
 
 
 class GoogleResult:
@@ -98,11 +100,12 @@ def _get_link(li):
     a = li.find("a")
     link = a["href"]
 
-    if link.startswith("/url?") or link.startswith("/search?"):
-        return None
+    if link.startswith("/url?"):
+        m = match('/url\?(url|q)=(.+?)&', link)
+        if m and len(m.groups()) == 2:
+            return unquote(m.group(2))
 
-    else:
-        return link
+    return None
 
 
 def _get_google_link(li):

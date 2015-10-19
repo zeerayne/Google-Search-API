@@ -76,7 +76,7 @@ search_results = google.search("This is my query", num_page)
 ```python
 GoogleResult:
     self.name # The title of the link
-    self.link # The external link (NOT implemented yet)
+    self.link # The external link
     self.google_link # The google link
     self.description # The description of the link
     self.thumb # The link to a thumbnail of the website (NOT implemented yet)
