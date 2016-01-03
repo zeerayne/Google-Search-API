@@ -53,6 +53,8 @@ To upgrade the package if you have already installed it:
 pip install Google-Search-API --upgrade
 ```
 
+Please note that you should also install **Firefox browser** in order to use images search.
+
 You could also just download or clone the repo and import the package from
 Google-Search-API folder.
 
