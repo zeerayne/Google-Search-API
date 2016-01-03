@@ -111,7 +111,10 @@ CalculatorResult
 *Parsing of the units must be implemented. The rest of the data members of CalculatorResult can be build from the values and units of the calculation.*
 
 ## Google Image Search
-Searches google images for a list of images.  Image searches can be filtered to produce better results. Image searches can be downloaded.
+Searches google images for a list of images. Image searches can be filtered to produce better results. Image searches can be downloaded.
+
+### Requirement
+Image search uses the selenium & the Firefox driver, therefor you MUST have [Firefox installed](https://www.mozilla.org/en-US/firefox/new/) to use it.
 
 Perform a google image search on "banana" and filter it:
 
