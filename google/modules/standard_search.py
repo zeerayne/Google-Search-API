@@ -45,7 +45,7 @@ class GoogleResult:
 
 
 # PUBLIC
-def search(query, pages=1, lang='en'):
+def search(query, pages=1, lang='en', void=True):
     """Returns a list of GoogleResult.
 
     Args:
@@ -77,7 +77,9 @@ def search(query, pages=1, lang='en'):
                 res.description = _get_description(li)
                 res.thumb = _get_thumb()
                 res.cached = _get_cached(li)
-
+                if void is True:
+                    if res.description is None:
+                        continue
                 results.append(res)
                 j += 1
 
@@ -96,9 +98,11 @@ def _get_name(li):
 
 def _get_link(li):
     """Return external link from a search."""
-
-    a = li.find("a")
-    link = a["href"]
+    try:
+        a = li.find("a")
+        link = a["href"]
+    except:
+        return None
 
     if link.startswith("/url?"):
         m = match('/url\?(url|q)=(.+?)&', link)
@@ -110,9 +114,11 @@ def _get_link(li):
 
 def _get_google_link(li):
     """Return google link from a search."""
-
-    a = li.find("a")
-    link = a["href"]
+    try:
+        a = li.find("a")
+        link = a["href"]
+    except:
+        return None
 
     if link.startswith("/url?") or link.startswith("/search?"):
         return urlparse.urljoin("http://www.google.com", link)

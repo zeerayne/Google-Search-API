@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from modules import images
 from modules import currency
 from modules import calculator
