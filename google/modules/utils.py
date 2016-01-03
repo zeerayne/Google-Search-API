@@ -8,7 +8,6 @@ from functools import wraps
 from urllib import urlencode
 
 
-
 def measure_time(fn):
 
     def decorator(*args, **kwargs):
@@ -32,11 +31,14 @@ def _get_search_url(query, page=0, per_page=10, lang='en'):
     # note: num per page might not be supported by google anymore (because of
     # google instant)
 
-    params = {'hl': lang, 'q': normalize_query(query).encode('utf8'), 'start':page * per_page, 'num':per_page}
+    params = {'nl': lang, 'q': query.encode(
+        'utf8'), 'start': page * per_page, 'num': per_page}
     params = urlencode(params)
     url = u"http://www.google.com/search?" + params
-    #return u"http://www.google.com/search?hl=%s&q=%s&start=%i&num=%i" % (lang, normalize_query(query), page * per_page, per_page)
+    # return u"http://www.google.com/search?hl=%s&q=%s&start=%i&num=%i" %
+    # (lang, normalize_query(query), page * per_page, per_page)
     return url
+
 
 def get_html(url):
     header = "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101"
