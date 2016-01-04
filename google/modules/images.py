@@ -150,9 +150,12 @@ class ImageResult:
         return id(self.link)
 
     def __repr__(self):
-        string = "ImageResult(" + \
-                 "index={}, page={}, ".format(unidecode(self.index), unidecode(self.page)) + \
-                 "domain={}, link={})".format(unidecode(self.domain), unidecode(self.link))
+        string = "ImageResult(index={i}, page={p}, domain={d}, link={l})".format(
+            i=str(self.index),
+            p=str(self.page),
+            d=unidecode(self.domain) if self.domain else None,
+            l=unidecode(self.link) if self.link else None
+        )
         return string
 
     def download(self, path="images"):

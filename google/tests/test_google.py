@@ -148,6 +148,18 @@ class SearchImagesTest(unittest.TestCase):
 
         self.assertEqual(req_url, exp_req_url)
 
+    def test_repr(self):
+        res = images.ImageResult()
+        assert repr(res) == 'ImageResult(index=None, page=None, domain=None, link=None)'
+        res.page = 1
+        res.index = 11
+        res.name = 'test'
+        res.thumb = 'test'
+        res.format = 'test'
+        res.domain = 'test'
+        res.link = 'http://aa.com'
+        assert repr(res) == 'ImageResult(index=11, page=1, domain=test, link=http://aa.com)'
+
     def test_download(self):
         pass
 
