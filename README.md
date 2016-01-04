@@ -203,6 +203,13 @@ class ColorType:
     COLOR = "color"
     BLACK_WHITE = "gray"
     SPECIFIC = "specific"
+
+class License:
+    NONE = None
+    REUSE = "fc"
+    REUSE_WITH_MOD = "fmc"
+    REUSE_NON_COMMERCIAL = "f"
+    REUSE_WITH_MOD_NON_COMMERCIAL = "fm"
 ```
 
 You can download a list of images.

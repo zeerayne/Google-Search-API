@@ -140,10 +140,11 @@ class SearchImagesTest(unittest.TestCase):
         options.image_type = images.ImageType.CLIPART
         options.larger_than = images.LargerThan.MP_4
         options.color = "green"
+        options.license = images.License.REUSE_WITH_MOD
 
         req_url = images._get_images_req_url(query, options)
 
-        exp_req_url = 'https://www.google.com.ar/search?q=banana&es_sm=122&source=lnms&tbm=isch&sa=X&ei=DDdUVL-fE4SpNq-ngPgK&ved=0CAgQ_AUoAQ&biw=1024&bih=719&dpr=1.25&tbs=itp:clipart,isz:lt,islt:4mp,ic:specific,isc:green'
+        exp_req_url = 'https://www.google.com.ar/search?q=banana&es_sm=122&source=lnms&tbm=isch&sa=X&ei=DDdUVL-fE4SpNq-ngPgK&ved=0CAgQ_AUoAQ&biw=1024&bih=719&dpr=1.25&tbs=itp:clipart,isz:lt,islt:4mp,ic:specific,isc:green,sur:fmc'
 
         self.assertEqual(req_url, exp_req_url)
 
