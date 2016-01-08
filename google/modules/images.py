@@ -62,6 +62,14 @@ class ColorType:
     SPECIFIC = "specific"
 
 
+class License:
+    NONE = None
+    REUSE = "fc"
+    REUSE_WITH_MOD = "fmc"
+    REUSE_NON_COMMERCIAL = "f"
+    REUSE_WITH_MOD_NON_COMMERCIAL = "fm"
+
+
 class ImageOptions:
 
     """Allows passing options to filter a google images search."""
@@ -74,6 +82,7 @@ class ImageOptions:
         self.exact_height = None
         self.color_type = None
         self.color = None
+        self.license = None
 
     def __repr__(self):
         return unidecode(self.__dict__)
@@ -100,6 +109,8 @@ class ImageOptions:
         if self.color:
             tbs = self._add_to_tbs(tbs, "ic", ColorType.SPECIFIC)
             tbs = self._add_to_tbs(tbs, "isc", self.color)
+        if self.license:
+            tbs = self._add_to_tbs(tbs, "sur", self.license)
         return tbs
 
     def _add_to_tbs(self, tbs, name, value):
@@ -139,9 +150,12 @@ class ImageResult:
         return id(self.link)
 
     def __repr__(self):
-        string = "ImageResult(" + \
-                 "index={}, page={}, ".format(unidecode(self.index), unidecode(self.page)) + \
-                 "domain={}, link={})".format(unidecode(self.domain), unidecode(self.link))
+        string = "ImageResult(index={i}, page={p}, domain={d}, link={l})".format(
+            i=str(self.index),
+            p=str(self.page),
+            d=unidecode(self.domain) if self.domain else None,
+            l=unidecode(self.link) if self.link else None
+        )
         return string
 
     def download(self, path="images"):
