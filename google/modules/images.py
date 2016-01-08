@@ -442,36 +442,39 @@ def search(query, image_options=None, num_images=50):
             # iterate over the divs containing images in one page
             divs = _find_divs_with_images(soup)
 
-            if divs:
-                for div in divs:
+            # empty search result page case
+            if not divs:
+                break
 
-                    res = ImageResult()
+            for div in divs:
 
-                    # store indexing paramethers
-                    res.page = page
-                    res.index = curr_num_img
+                res = ImageResult()
 
-                    # get url of image and its secondary data
-                    a = div.find("a")
-                    if a:
-                        _get_image_data(res, a)
+                # store indexing paramethers
+                res.page = page
+                res.index = curr_num_img
 
-                    # get url of thumb and its size paramethers
-                    img = a.find_all("img")
-                    if img:
-                        _get_thumb_data(res, img)
+                # get url of image and its secondary data
+                a = div.find("a")
+                if a:
+                    _get_image_data(res, a)
 
-                    # increment image counter only if a new image was added
-                    prev_num_results = len(results)
-                    results.add(res)
-                    curr_num_results = len(results)
+                # get url of thumb and its size paramethers
+                img = a.find_all("img")
+                if img:
+                    _get_thumb_data(res, img)
 
-                    if curr_num_results > prev_num_results:
-                        curr_num_img += 1
+                # increment image counter only if a new image was added
+                prev_num_results = len(results)
+                results.add(res)
+                curr_num_results = len(results)
 
-                    # break the loop when limit of images is reached
-                    if curr_num_img >= num_images:
-                        break
+                if curr_num_results > prev_num_results:
+                    curr_num_img += 1
+
+                # break the loop when limit of images is reached
+                if curr_num_img >= num_images:
+                    break
 
     browser.quit()
 
