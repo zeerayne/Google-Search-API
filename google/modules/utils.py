@@ -2,10 +2,17 @@ from __future__ import unicode_literals
 
 import time
 from selenium import webdriver
-import urllib2
+try:
+    import urllib.request as urllib2
+except ImportError:
+    import urllib2
 from functools import wraps
 #import requests
-from urllib import urlencode
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 
 
 def measure_time(fn):
@@ -16,7 +23,7 @@ def measure_time(fn):
         res = fn(*args, **kwargs)
 
         elapsed = time.time() - start
-        print fn.__name__, "took", elapsed, "seconds"
+        print(fn.__name__, "took", elapsed, "seconds")
 
         return res
 
@@ -48,14 +55,14 @@ def get_html(url):
         html = urllib2.urlopen(request).read()
         return html
     except urllib2.HTTPError as e:
-        print "Error accessing:", url
+        print("Error accessing:", url)
         if e.code == 503 and 'CaptchaRedirect' in e.read():
-            print "Google is requiring a Captcha. " \
-                  "For more information see: 'https://support.google.com/websearch/answer/86640'"
+            print("Google is requiring a Captcha. " \
+                  "For more information see: 'https://support.google.com/websearch/answer/86640'")
         return None
     except Exception as e:
-        print "Error accessing:", url
-        print e
+        print("Error accessing:", url)
+        print(e)
         return None
 
 
@@ -77,7 +84,7 @@ def get_browser_with_url(url, timeout=120, driver="firefox"):
     elif driver == "chrome":
         browser = webdriver.Chrome()
     else:
-        print "Driver choosen is not recognized"
+        print("Driver choosen is not recognized")
 
     # set maximum load time
     browser.set_page_load_timeout(timeout)
@@ -117,7 +124,7 @@ def get_html_from_dynamic_site(url, timeout=120,
             break
 
         except:
-            print "\nTry ", i, " of ", attempts, "\n"
+            print("\nTry ", i, " of ", attempts, "\n")
             time.sleep(5)
 
     return RV
@@ -130,7 +137,7 @@ def timeit(func=None, loops=1, verbose=False):
             sums = 0.0
             mins = 1.7976931348623157e+308
             maxs = 0.0
-            print '====%s Timing====' % func.__name__
+            print('====%s Timing====' % func.__name__)
             for i in range(0, loops):
                 t0 = time.time()
                 result = func(*args, **kwargs)
@@ -139,11 +146,11 @@ def timeit(func=None, loops=1, verbose=False):
                 maxs = dt if dt > maxs else maxs
                 sums += dt
                 if verbose:
-                    print '\t%r ran in %2.9f sec on run %s' % (func.__name__, dt, i)
-            print '%r min run time was %2.9f sec' % (func.__name__, mins)
-            print '%r max run time was %2.9f sec' % (func.__name__, maxs)
-            print '%r avg run time was %2.9f sec in %s runs' % (func.__name__, sums / loops, loops)
-            print '==== end ===='
+                    print('\t%r ran in %2.9f sec on run %s' % (func.__name__, dt, i))
+            print('%r min run time was %2.9f sec' % (func.__name__, mins))
+            print('%r max run time was %2.9f sec' % (func.__name__, maxs))
+            print('%r avg run time was %2.9f sec in %s runs' % (func.__name__, sums / loops, loops))
+            print('==== end ====')
             return result
 
         return inner
@@ -159,7 +166,7 @@ def timing(f):
         ts = time.time()
         result = f(*args, **kw)
         te = time.time()
-        print 'func:%r args:[%r, %r] took: %2.4f sec' % \
-            (f.__name__, args, kw, te - ts)
+        print('func:%r args:[%r, %r] took: %2.4f sec' % \
+            (f.__name__, args, kw, te - ts))
         return result
     return wrap

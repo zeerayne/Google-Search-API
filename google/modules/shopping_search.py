@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 
-from utils import get_html, normalize_query
+try:
+    from google.modules.utils import get_html, normalize_query
+except ImportError:
+    from utils import get_html, normalize_query
 from bs4 import BeautifulSoup
 import re
 from unidecode import unidecode

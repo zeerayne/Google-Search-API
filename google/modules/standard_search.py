@@ -1,9 +1,18 @@
 from __future__ import unicode_literals
 
-from utils import _get_search_url, get_html
+try:
+    from google.modules.utils import _get_search_url, get_html
+except ImportError:
+    from utils import _get_search_url, get_html
 from bs4 import BeautifulSoup
-import urlparse
-from urllib2 import unquote
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib2 import unquote
 from unidecode import unidecode
 from re import match
 
@@ -62,7 +71,7 @@ def search(query, pages=1, lang='en', void=True):
 
         if html:
             soup = BeautifulSoup(html, "html.parser")
-            lis = soup.findAll("li", attrs={"class": "g"})
+            lis = soup.findAll("div", attrs={"class": "g"})
             
             j = 0
             for li in lis:
