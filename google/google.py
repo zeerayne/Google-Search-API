@@ -1,10 +1,17 @@
 from __future__ import unicode_literals
 
-from modules import images
-from modules import currency
-from modules import calculator
-from modules import standard_search
-from modules import shopping_search
+try:
+    from modules import images
+    from modules import currency
+    from modules import calculator
+    from modules import standard_search
+    from modules import shopping_search
+except ImportError:
+    from google.modules import images
+    from google.modules import currency
+    from google.modules import calculator
+    from google.modules import standard_search
+    from google.modules import shopping_search
 
 __author__ = "Anthony Casagrande <birdapi@gmail.com>, " + \
     "Agustin Benassi <agusbenassi@gmail.com>"
